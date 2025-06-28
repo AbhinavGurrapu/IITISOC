@@ -85,7 +85,11 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
         </a>
         <p className="text-gray-300 mt-8 mb-2">──────── or ────────</p>
         <div className="flex justify-evenly w-full mb-4">
-          <i className="fab fa-google text-2xl text-white/80 hover:text-white cursor-pointer transition"></i>
+          <i
+            className="fab fa-google text-2xl text-white/80 hover:text-white cursor-pointer transition"
+            onClick={() => window.location.href = 'http://localhost:3001/auth/google'}
+            title="Sign in with Google"
+          ></i>
           <i className="fab fa-github text-2xl text-white/80 hover:text-white cursor-pointer transition"></i>
           <i className="fab fa-facebook text-2xl text-white/80 hover:text-white cursor-pointer transition"></i>
         </div>
