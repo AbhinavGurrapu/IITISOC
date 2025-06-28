@@ -3,8 +3,10 @@ const express = require('express');
 const contestRoutes = require('./routes/contests');
 const favoritesRoutes = require('./routes/favorites');
 const favoritesProblemsRoutes = require('./routes/favoritesProblems');
+const userRoutes = require('./routes/user');
 const cors = require('cors');
 const connectDB = require('./db');
+const User = require('./models/User');
 
 // Google Auth dependencies
 const passport = require('passport');
@@ -31,9 +33,24 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID',
     clientSecret: process.env.GOOGLE_CLIENT_SECRET || 'YOUR_GOOGLE_CLIENT_SECRET',
     callbackURL: '/auth/google/callback'
-}, (accessToken, refreshToken, profile, done) => {
-    // You can store user in DB here
-    return done(null, profile);
+}, async (accessToken, refreshToken, profile, done) => {
+    try {
+        // Find or create user in MongoDB
+        const existingUser = await User.findOne({ googleId: profile.id });
+        if (existingUser) {
+            return done(null, existingUser);
+        }
+        const newUser = new User({
+            name: profile.displayName,
+            email: profile.emails[0].value,
+            googleId: profile.id,
+            profilePicture: profile.photos[0]?.value
+        });
+        await newUser.save();
+        return done(null, newUser);
+    } catch (err) {
+        return done(err, null);
+    }
 }));
 
 // Google Auth Routes
@@ -50,5 +67,67 @@ app.get('/auth/google/callback',
 app.use('/api/contests', contestRoutes);
 app.use('/api/favorites', favoritesRoutes);
 app.use('/api/favorites', favoritesProblemsRoutes);
+app.use('/api/user', userRoutes);
+
+// Manual signup route
+app.post('/api/signup', async (req, res) => {
+    try {
+        const { name, email, password, profilePicture } = req.body;
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ error: 'User already exists' });
+        }
+        // Save user (for demo, password is stored as plain text; use hashing in production)
+        const newUser = new User({
+            name,
+            email,
+            profilePicture,
+            // You can add password field to User model if needed
+        });
+        await newUser.save();
+        res.status(201).json({ message: 'User created', user: newUser });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Manual login route
+app.post('/api/login', async (req, res) => {
+    try {
+        const { email } = req.body;
+        // For demo, just find by email; add password check if you add password field
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ error: 'Invalid credentials' });
+        }
+        res.json({ message: 'Login successful', user });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Get user by id with populated favorites
+app.get('/api/user/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+            .populate('favoriteContests')
+            .populate('favoriteProblems');
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// List all users (for debugging)
+app.get('/api/users', async (req, res) => {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 
 app.listen(3001, () => console.log('Backend running on http://localhost:3001'));

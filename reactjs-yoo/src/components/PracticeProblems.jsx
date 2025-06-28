@@ -110,7 +110,11 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
       <ContestsNavbar
         goToHome={goToHome}
         goToCalendar={goToCalendar}
-        onSignOut={onSignOut}
+        onSignOut={() => {
+                setPage('first');
+                setPersonalInfo(null);
+                localStorage.removeItem('personalInfo');
+              }}
         streak={streak}
         username={username}
       />
