@@ -87,7 +87,18 @@ function App() {
       {page === 'calendar' && (
         <div className="top-0 bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
           <div className="pt-4">
-            <CalendarPage goToHome={() => setPage('home')} goToFirstPage={() => setPage('home')} />
+            <CalendarPage 
+              goToHome={() => setPage('home')} 
+              goToFirstPage={() => setPage('home')} 
+              goToCalendar={() => setPage('calendar')}
+              onSignOut={() => {
+                setPage('first');
+                setPersonalInfo(null);
+                localStorage.removeItem('personalInfo');
+              }}
+              streak={0}
+              username={username}
+            />
           </div>
         </div>
       )}
@@ -102,7 +113,18 @@ function App() {
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
             </button>
-            <ContestListByDay userId={username || 'demo'} />
+            <ContestListByDay 
+              userId={username || 'demo'}
+              goToHome={() => setPage('home')}
+              goToCalendar={() => setPage('calendar')}
+              onSignOut={() => {
+                setPage('first');
+                setPersonalInfo(null);
+                localStorage.removeItem('personalInfo');
+              }}
+              streak={0}
+              username={username}
+            />
             <FavoriteContests userId={username || 'demo'} />
           </div>
         </div>

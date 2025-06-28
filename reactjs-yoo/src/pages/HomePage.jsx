@@ -212,7 +212,7 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
             <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition">Practice</li>
             <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition">Help</li>
             <li
-              className="cursor-pointer px-5 py-2.5 hover:bg-indigo-600 rounded-xl text-white transition"
+              className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition"
               onClick={goToCalendar}
             >
               My Calendar
