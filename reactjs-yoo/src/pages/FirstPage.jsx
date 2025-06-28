@@ -45,13 +45,16 @@ export default function FirstPage({ goToSignIn, goToSignUp, goToHome }) {
             CodeBlitz
           </p>
           <ul className="flex justify-end gap-2">
-            <li className="cursor-pointer px-6 py-3 text-white hover:bg-indigo-600/80 rounded-xl text-indigo-900 font-semibold text-lg transition shadow-sm hover:text-white">
+            <li className="cursor-pointer px-6 py-3 text-white hover:bg-indigo-600/80 rounded-xl text-indigo-900 font-semibold text-lg transition shadow-sm hover:text-white"
+                onClick={goToSignIn}>
               Compete
             </li>
-            <li className="cursor-pointer px-6 py-3 text-white hover:bg-indigo-600/80 rounded-xl text-indigo-900 font-semibold text-lg transition shadow-sm hover:text-white">
+            <li className="cursor-pointer px-6 py-3 text-white hover:bg-indigo-600/80 rounded-xl text-indigo-900 font-semibold text-lg transition shadow-sm hover:text-white"
+              onClick={goToSignIn}>
               Practice
             </li>
-            <li className="cursor-pointer px-6 py-3 text-white hover:bg-indigo-600/80 rounded-xl text-indigo-900 font-semibold text-lg transition shadow-sm hover:text-white">
+            <li className="cursor-pointer px-6 py-3 text-white hover:bg-indigo-600/80 rounded-xl text-indigo-900 font-semibold text-lg transition shadow-sm hover:text-white"
+              onClick={goToSignIn}>
               Contests
             </li>
             <li
