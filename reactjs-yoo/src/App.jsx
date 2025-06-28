@@ -15,8 +15,14 @@ import ContestsNavbar from './components/ContestsNavbar';
 import MyProfile from './pages/MyProfile'; // Import MyProfile component
 
 function App() {
-  const [page, setPage] = useState('first');
-  const [username, setUsername] = useState('');
+  const [page, setPage] = useState(() => {
+    // Check if user is already logged in
+    const savedUsername = localStorage.getItem('username');
+    return savedUsername ? 'home' : 'first';
+  });
+  const [username, setUsername] = useState(() => {
+    return localStorage.getItem('username') || '';
+  });
   const [personalInfo, setPersonalInfo] = useState(() => {
     const saved = localStorage.getItem('personalInfo');
     return saved ? JSON.parse(saved) : null;
@@ -26,12 +32,14 @@ function App() {
 
   const handleLogin = (name) => {
     setUsername(name);
+    localStorage.setItem('username', name); // Save username to localStorage
     setSignupFlow(false); // Not in signup flow, so skip PersonalInfo
     setPage('home');
   };
 
   const handleSignUp = (name) => {
     setUsername(name);
+    localStorage.setItem('username', name); // Save username to localStorage
     setSignupFlow(true); // In signup flow, require PersonalInfo
     setPage('personalinfo');
   };
@@ -117,9 +125,11 @@ function App() {
         <HomePage
           username={username}
           onSignOut={() => {
+            setUsername('');
             setPage('first');
             setPersonalInfo(null);
             localStorage.removeItem('personalInfo');
+            localStorage.removeItem('username');
           }}
           goToCalendar={() => setPage('calendar')}
           goToHome={() => setPage('home')}
@@ -146,9 +156,11 @@ function App() {
               goToFirstPage={() => setPage('home')} 
               goToCalendar={() => setPage('calendar')}
               onSignOut={() => {
+                setUsername('');
                 setPage('first');
                 setPersonalInfo(null);
                 localStorage.removeItem('personalInfo');
+                localStorage.removeItem('username');
               }}
               streak={0}
               username={username}
@@ -165,9 +177,11 @@ function App() {
               goToHome={() => setPage('home')}
               goToCalendar={() => setPage('calendar')}
               onSignOut={() => {
+                setUsername('');
                 setPage('first');
                 setPersonalInfo(null);
                 localStorage.removeItem('personalInfo');
+                localStorage.removeItem('username');
               }}
               streak={0}
               username={username}
