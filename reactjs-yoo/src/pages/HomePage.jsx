@@ -1,6 +1,74 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Card from 'react-bootstrap/Card';
 
+const DAILY_PROBLEM_APIS = [
+  // LeetCode Daily Challenge
+  {
+    name: 'LeetCode',
+    fetcher: async () => {
+      const res = await fetch('https://leetcode.com/graphql', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: `query questionOfToday { activeDailyCodingChallengeQuestion { question { title titleSlug difficulty } } }`,
+        }),
+      });
+      const data = await res.json();
+      const q = data.data?.activeDailyCodingChallengeQuestion?.question;
+      return q ? {
+        title: q.title,
+        link: `https://leetcode.com/problems/${q.titleSlug}/`,
+        platform: 'LeetCode',
+        difficulty: q.difficulty,
+      } : null;
+    },
+  },
+  // GeeksforGeeks POTD
+  {
+    name: 'GeeksforGeeks',
+    fetcher: async () => {
+      // GFG POTD unofficial API (community-maintained)
+      const res = await fetch('https://gfg-problem-of-the-day-api.vercel.app/api/potd');
+      const data = await res.json();
+      if (data && data.problem) {
+        return {
+          title: data.problem.title,
+          link: data.problem.url,
+          platform: 'GeeksforGeeks',
+          difficulty: data.problem.difficulty,
+        };
+      }
+      return null;
+    },
+  },
+  // CodeChef POTD (unofficial, fallback to practice page)
+  {
+    name: 'CodeChef',
+    fetcher: async () => {
+      // No official API, so fallback to practice page
+      return {
+        title: 'CodeChef Practice Problem',
+        link: 'https://www.codechef.com/practice',
+        platform: 'CodeChef',
+        difficulty: '',
+      };
+    },
+  },
+  // HackerRank Interview Preparation Kit (as daily)
+  {
+    name: 'HackerRank',
+    fetcher: async () => {
+      // No official daily, so fallback to Interview Preparation Kit
+      return {
+        title: 'HackerRank Interview Prep Kit',
+        link: 'https://www.hackerrank.com/interview/interview-preparation-kit',
+        platform: 'HackerRank',
+        difficulty: '',
+      };
+    },
+  },
+];
+
 export default function HomePage({ username, onSignOut, goToCalendar, goToHome, goToFirstPage }) {
   const [dailyProblem, setDailyProblem] = useState(null);
   const [streak, setStreak] = useState(0);
@@ -8,16 +76,28 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
   const [solvedToday, setSolvedToday] = useState(false);
   const dropdownRef = useRef(null);
 
-  const generateDailyProblem = () => ({
-    title: 'Reverse Words in a String',
-    link: 'https://www.geeksforgeeks.org/problems/reverse-words-in-a-given-string/0',
-    platform: 'GeeksforGeeks',
-  });
-
   useEffect(() => {
     const savedStreak = localStorage.getItem('streak') || 0;
     setStreak(Number(savedStreak));
-    setDailyProblem(generateDailyProblem());
+    // Fetch daily problem from random platform (LeetCode, GFG, CodeChef, HackerRank)
+    async function fetchRandomDailyProblem() {
+      const apis = [...DAILY_PROBLEM_APIS];
+      for (let i = apis.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [apis[i], apis[j]] = [apis[j], apis[i]];
+      }
+      for (const api of apis) {
+        try {
+          const prob = await api.fetcher();
+          if (prob) {
+            setDailyProblem(prob);
+            return;
+          }
+        } catch (e) { /* ignore and try next */ }
+      }
+      setDailyProblem(null);
+    }
+    fetchRandomDailyProblem();
     // Check if solved today
     const today = new Date().toISOString().split('T')[0];
     const savedDates = JSON.parse(localStorage.getItem('solvedDates')) || [];
@@ -211,7 +291,7 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
             <div className="rounded-3xl shadow-2xl bg-white/90 border border-indigo-100 p-8 flex flex-col items-center max-w-md w-full">
               <div className="text-2xl font-extrabold text-indigo-800 mb-2">Daily Problem</div>
               <div className="text-indigo-800 font-semibold text-center mb-1 text-lg">{dailyProblem.title}</div>
-              <div className="text-indigo-600 text-base mb-2">Platform: {dailyProblem.platform}</div>
+              <div className="text-indigo-600 text-base mb-2">Platform: {dailyProblem.platform}{dailyProblem.difficulty ? ` (${dailyProblem.difficulty})` : ''}</div>
               <a
                 href={dailyProblem.link}
                 target="_blank"
