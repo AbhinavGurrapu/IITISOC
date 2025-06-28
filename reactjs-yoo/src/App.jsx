@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage';
 import CalendarPage from './pages/CalendarPage';
 import ContestListByDay from './components/ContestListByDay';
 import FavoriteContests from './components/FavoriteContests';
+import PersonalInfo from './pages/PersonalInfo';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import Footer from './components/Footer';
@@ -14,10 +15,29 @@ import ContestsNavbar from './components/ContestsNavbar';
 function App() {
   const [page, setPage] = useState('first');
   const [username, setUsername] = useState('');
+  const [personalInfo, setPersonalInfo] = useState(() => {
+    const saved = localStorage.getItem('personalInfo');
+    return saved ? JSON.parse(saved) : null;
+  });
+  const [signupFlow, setSignupFlow] = useState(false); // Track if user is in signup flow
 
   const handleLogin = (name) => {
     setUsername(name);
+    setSignupFlow(false); // Not in signup flow, so skip PersonalInfo
     setPage('home');
+  };
+
+  const handleSignUp = (name) => {
+    setUsername(name);
+    setSignupFlow(true); // In signup flow, require PersonalInfo
+    setPage('personalinfo');
+  };
+
+  const handlePersonalInfoSubmit = (info) => {
+    setPersonalInfo(info);
+    localStorage.setItem('personalInfo', JSON.stringify(info));
+    setPage('home');
+    setSignupFlow(false); // Reset after info is filled
   };
 
   // Expose setPage globally for navbar navigation
@@ -43,15 +63,22 @@ function App() {
       )}
       {page === 'signup' && (
         <SignUp
-          onSignUp={handleLogin}
+          onSignUp={handleSignUp}
           goToSignIn={() => setPage('signin')}
           goToFirstPage={() => setPage('first')}
         />
       )}
+      {page === 'personalinfo' && signupFlow && (
+        <PersonalInfo onSubmit={handlePersonalInfoSubmit} />
+      )}
       {page === 'home' && (
         <HomePage
           username={username}
-          onSignOut={() => setPage('first')}
+          onSignOut={() => {
+            setPage('first');
+            setPersonalInfo(null);
+            localStorage.removeItem('personalInfo');
+          }}
           goToCalendar={() => setPage('calendar')}
           goToHome={() => setPage('home')}
           goToFirstPage={() => setPage('first')}
