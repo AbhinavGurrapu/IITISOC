@@ -4,6 +4,9 @@ const contestRoutes = require('./routes/contests');
 const favoritesRoutes = require('./routes/favorites');
 const favoritesProblemsRoutes = require('./routes/favoritesProblems');
 const cors = require('cors');
+const connectDB = require('./db');
+
+connectDB();
 
 const app = express();
 app.use(cors());
