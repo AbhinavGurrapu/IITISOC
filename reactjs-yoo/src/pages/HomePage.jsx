@@ -190,15 +190,7 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
-      {/* Go Back Button */}
-      <button
-        className="absolute top-8 left-8 bg-white/40 hover:bg-white/70 text-indigo-700 rounded-full p-2 shadow-lg z-50 transition"
-        onClick={goToFirstPage}
-        aria-label="Go Back"
-        style={{backdropFilter: 'blur(6px)'}}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
+      
       {/* Floating Navbar with solid color, rounded edges, and margin */}
       <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-700 h-16 flex justify-between px-2 shadow-xl rounded-2xl items-center border border-indigo-200">
         <p className="text-4xl font-serif font-semibold text-white cursor-pointer" onClick={goToHome}>

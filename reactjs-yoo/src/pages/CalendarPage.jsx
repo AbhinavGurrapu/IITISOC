@@ -37,15 +37,7 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
         streak={streak} 
         username={username} 
       />
-      {/* Go Back Button */}
-      <button
-        className="absolute top-4 left-2 sm:top-8 sm:left-8 bg-white/40 hover:bg-white/70 text-indigo-700 rounded-full p-2 shadow-lg z-50 transition"
-        onClick={goToFirstPage}
-        aria-label="Go Back"
-        style={{backdropFilter: 'blur(6px)'}}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
+      
       {/* Title & Subtitle */}
       <div className="flex flex-col items-center mt-4 sm:mt-8 mb-2 sm:mb-4 px-2 w-full">
         <CalendarIcon />
