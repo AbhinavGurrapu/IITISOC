@@ -12,6 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import Footer from './components/Footer';
 import ContestsNavbar from './components/ContestsNavbar';
+import MyProfile from './pages/MyProfile'; // Import MyProfile component
 
 function App() {
   const [page, setPage] = useState('first');
@@ -47,6 +48,7 @@ function App() {
   const goToFirstPage = () => setPage('first');
   const goToCalendar = () => setPage('calendar');
   const goToPractice = () => setPage('practice');
+  const goToProfile = () => setPage('profile');
 
   // Sync page state with browser history
   useEffect(() => {
@@ -122,6 +124,18 @@ function App() {
           goToCalendar={() => setPage('calendar')}
           goToHome={() => setPage('home')}
           goToFirstPage={() => setPage('first')}
+          goToProfile={() => setPage('profile')}
+        />
+      )}
+      {page === 'profile' && (
+        <MyProfile
+          username={username}
+          goToHome={() => setPage('home')}
+          personalInfo={personalInfo || {}}
+          onEditInfo={(info) => {
+            setPersonalInfo(info);
+            localStorage.setItem('personalInfo', JSON.stringify(info));
+          }}
         />
       )}
       {page === 'calendar' && (
