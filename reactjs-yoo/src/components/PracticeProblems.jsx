@@ -106,6 +106,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 pb-10 flex flex-col">
+      <div className="mt-4"></div>
       <ContestsNavbar
         goToHome={goToHome}
         goToCalendar={goToCalendar}
@@ -226,6 +227,11 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
             </ul>
           </div>
         )}
+      </div>
+      {/* Floating Streak Card at Bottom Right */}
+      <div className="fixed bottom-10 right-8 z-50 bg-indigo-700 border border-indigo-300 shadow-2xl rounded-2xl flex items-center gap-2 px-6 py-3 text-white font-bold text-lg backdrop-blur-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap text-yellow-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>Streak: {streak}</span>
       </div>
     </div>
   );

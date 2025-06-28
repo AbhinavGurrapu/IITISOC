@@ -39,8 +39,9 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
       />
       
       {/* Title & Subtitle */}
-      <div className="flex flex-col items-center mt-4 sm:mt-8 mb-2 sm:mb-4 px-2 w-full">
-        <CalendarIcon />
+      <div className="flex flex-col items-center mt-4 sm:mt-2 mb-10 sm:mb-4 px-2 w-full">
+        <div className="mt-16"></div>
+        <CalendarIcon />   
         <h1 className="text-center font-mono font-extrabold text-2xl sm:text-3xl md:text-4xl py-2 text-indigo-800 drop-shadow">Your Practice Calendar</h1>
         <p className="text-center text-base sm:text-lg text-indigo-700/80 font-medium max-w-xs sm:max-w-xl">Track your daily progress and stay motivated! Days you solved a problem are highlighted in green.</p>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2 sm:mt-4 w-full max-w-xs sm:max-w-none justify-center items-center">
