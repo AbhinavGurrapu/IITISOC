@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Card from 'react-bootstrap/Card';
+import PersonalInfo from './PersonalInfo';
 
-export default function HomePage({ username, onSignOut, goToCalendar, goToHome }) {
+export default function HomePage({ username, onSignOut, goToCalendar, goToHome, goToFirstPage }) {
   const [dailyProblem, setDailyProblem] = useState(null);
   const [streak, setStreak] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [solvedToday, setSolvedToday] = useState(false);
+  const [personalInfo, setPersonalInfo] = useState(() => {
+    const saved = localStorage.getItem('personalInfo');
+    return saved ? JSON.parse(saved) : null;
+  });
   const dropdownRef = useRef(null);
 
   const generateDailyProblem = () => ({
@@ -44,6 +49,11 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome }
     localStorage.removeItem('streak');
     localStorage.removeItem('solvedDates');
     onSignOut();
+  };
+
+  const handlePersonalInfoSubmit = (info) => {
+    setPersonalInfo(info);
+    localStorage.setItem('personalInfo', JSON.stringify(info));
   };
 
   const contests = [
@@ -108,8 +118,21 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome }
     };
   }, [dropdownOpen]);
 
+  if (!personalInfo) {
+    return <PersonalInfo onSubmit={handlePersonalInfoSubmit} />;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
+      {/* Go Back Button */}
+      <button
+        className="absolute top-8 left-8 bg-white/40 hover:bg-white/70 text-indigo-700 rounded-full p-2 shadow-lg z-50 transition"
+        onClick={goToFirstPage}
+        aria-label="Go Back"
+        style={{backdropFilter: 'blur(6px)'}}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
       {/* Floating Navbar with solid color, rounded edges, and margin */}
       <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-700 h-16 flex justify-between px-8 shadow-xl rounded-2xl items-center border border-indigo-200">
         <p className="text-4xl font-serif font-semibold text-white cursor-pointer" onClick={goToHome}>
@@ -173,7 +196,7 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome }
       {/* Add padding to prevent content from being hidden behind navbar */}
       <div className="pt-28 pb-4 flex flex-col items-center">
         <h1 className="font-mono font-extrabold text-3xl md:text-4xl text-indigo-800 drop-shadow text-center">
-          Welcome {username && username.split(' ')[0]}! Looking For Contests?
+          Welcome {personalInfo.firstName}! Looking For Contests?
         </h1>
         <p className="text-lg text-indigo-700/80 font-medium max-w-xl text-center mt-2">
           Explore upcoming contests, track your streak, and solve a daily problem to keep your skills sharp!

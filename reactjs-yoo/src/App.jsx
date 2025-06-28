@@ -38,12 +38,14 @@ function App() {
         <SignIn
           onLogin={handleLogin}
           goToSignUp={() => setPage('signup')}
+          goToFirstPage={() => setPage('first')}
         />
       )}
       {page === 'signup' && (
         <SignUp
           onSignUp={handleLogin}
           goToSignIn={() => setPage('signin')}
+          goToFirstPage={() => setPage('first')}
         />
       )}
       {page === 'home' && (
@@ -51,7 +53,8 @@ function App() {
           username={username}
           onSignOut={() => setPage('first')}
           goToCalendar={() => setPage('calendar')}
-          {...(username && { goToHome: () => setPage('home') })}
+          goToHome={() => setPage('home')}
+          goToFirstPage={() => setPage('first')}
         />
       )}
       {page === 'calendar' && (
@@ -64,7 +67,7 @@ function App() {
             username={username}
           />
           <div className="pt-28">
-            <CalendarPage goToHome={() => setPage('home')} />
+            <CalendarPage goToHome={() => setPage('home')} goToFirstPage={() => setPage('home')} />
           </div>
         </div>
       )}
@@ -78,14 +81,20 @@ function App() {
             username={username}
           />
           <div className="pt-28">
+            <button
+              className="absolute top-8 left-8 bg-white/40 hover:bg-white/70 text-indigo-700 rounded-full p-2 shadow-lg z-50 transition"
+              onClick={() => setPage('home')}
+              aria-label="Go Back"
+              style={{backdropFilter: 'blur(6px)'}}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
             <ContestListByDay userId={username || 'demo'} />
             <FavoriteContests userId={username || 'demo'} />
           </div>
         </div>
       )}
       <Footer />
-      {/* Add a button to navigate to contests page for demo */}
-      {/* <button onClick={() => setPage('contests')} style={{position:'fixed',bottom:80,right:30,zIndex:1000,background:'#6366f1',color:'white',padding:'12px 24px',borderRadius:12}}>Show Contests</button> */}
     </div>
   );
 }

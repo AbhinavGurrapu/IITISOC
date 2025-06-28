@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function SignIn({ onLogin, goToSignUp }) {
+export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showUsernameError, setShowUsernameError] = useState(false);
@@ -28,14 +28,32 @@ export default function SignIn({ onLogin, goToSignUp }) {
         backgroundRepeat: 'no-repeat',
       }}
     >
+      {/* Go Back Button */}
+      <button
+        className="absolute top-8 left-8 bg-white/40 hover:bg-white/70 text-indigo-700 rounded-full p-2 shadow-lg z-50 transition"
+        onClick={goToFirstPage}
+        aria-label="Go Back"
+        style={{ backdropFilter: 'blur(6px)' }}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="28"
+          height="28"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </button>
       <div className="relative bg-white/20 backdrop-blur-lg shadow-2xl h-auto w-96 text-center p-10 rounded-3xl border border-white/30 flex flex-col items-center">
         <p className="text-4xl font-serif font-bold text-white mb-8 drop-shadow-lg tracking-wide">
           CodeBlitz
         </p>
-        <form
-          onSubmit={handleSubmit}
-          className="w-full flex flex-col gap-6"
-        >
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
           <div className="flex flex-col items-start w-full">
             <input
               type="text"
@@ -48,7 +66,10 @@ export default function SignIn({ onLogin, goToSignUp }) {
               className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition"
             />
             {showUsernameError && (
-              <span className="text-red-500 text-xs mt-1 ml-1">* You have to fill this to proceed</span>
+              <span className="text-red-500 text-xs mt-1 ml-1">
+                {' '}
+                * You have to fill this to proceed
+              </span>
             )}
           </div>
           <div className="flex flex-col items-start w-full">
@@ -63,7 +84,10 @@ export default function SignIn({ onLogin, goToSignUp }) {
               className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition"
             />
             {showPasswordError && (
-              <span className="text-red-500 text-xs mt-1 ml-1">* You have to fill this to proceed</span>
+              <span className="text-red-500 text-xs mt-1 ml-1">
+                {' '}
+                * You have to fill this to proceed
+              </span>
             )}
           </div>
           <button
