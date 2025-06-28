@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import ContestsNavbar from '../components/ContestsNavbar';
 
 const allowedPlatforms = [
   'codechef.com',
@@ -18,7 +19,9 @@ const platformLabels = {
   'hackerrank.com': 'HackerRank'
 };
 
-function ContestListByDay({ userId }) {
+function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, username }) {
+  // Make sure to pass goToHome, goToCalendar, onSignOut, streak, username from the parent just like CalendarPage
+  // This ensures the navbar is fully functional (navigation and sign out)
   const [groupedContests, setGroupedContests] = useState({});
   const [favLoading, setFavLoading] = useState(null);
   const [selectedPlatforms, setSelectedPlatforms] = useState(allowedPlatforms);
@@ -77,7 +80,16 @@ function ContestListByDay({ userId }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col items-center pb-20 px-2">
-      <div className="w-full max-w-6xl mx-auto mt-10 mb-6">
+      {/* Fixed navbar at the top, same as CalendarPage */}
+      <ContestsNavbar 
+        goToHome={goToHome} 
+        goToCalendar={goToCalendar} 
+        onSignOut={onSignOut} 
+        streak={streak} 
+        username={username} 
+      />
+      {/* Add margin to avoid overlap with fixed navbar */}
+      <div className="w-full max-w-6xl mx-auto mt-24 mb-6">
         <h2 className="text-5xl font-extrabold text-indigo-900 drop-shadow-lg text-center mb-4 tracking-tight">Upcoming Contests</h2>
         <div className="flex flex-wrap justify-center gap-4 mb-8">
           {allowedPlatforms.map(p => (

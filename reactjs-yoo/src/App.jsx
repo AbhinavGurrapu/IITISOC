@@ -85,29 +85,15 @@ function App() {
         />
       )}
       {page === 'calendar' && (
-        <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
-          <ContestsNavbar
-            goToHome={() => setPage('home')}
-            goToCalendar={() => setPage('calendar')}
-            onSignOut={() => setPage('first')}
-            streak={0} // Optionally pass streak if available
-            username={username}
-          />
-          <div className="pt-28">
+        <div className="top-0 bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
+          <div className="pt-4">
             <CalendarPage goToHome={() => setPage('home')} goToFirstPage={() => setPage('home')} />
           </div>
         </div>
       )}
       {page === 'contests' && (
         <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
-          <ContestsNavbar
-            goToHome={() => setPage('home')}
-            goToCalendar={() => setPage('calendar')}
-            onSignOut={() => setPage('first')}
-            streak={0} // Optionally pass streak if available
-            username={username}
-          />
-          <div className="pt-28">
+          <div className="pt-4">
             <button
               className="absolute top-8 left-8 bg-white/40 hover:bg-white/70 text-indigo-700 rounded-full p-2 shadow-lg z-50 transition"
               onClick={() => setPage('home')}

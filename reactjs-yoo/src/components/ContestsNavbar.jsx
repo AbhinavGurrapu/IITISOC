@@ -21,7 +21,7 @@ function ContestsNavbar({ goToHome, goToCalendar, onSignOut, streak, username })
   }, [dropdownOpen]);
 
   return (
-    <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-700 h-16 flex justify-between px-8 shadow-xl rounded-2xl items-center border border-indigo-200">
+    <div className="top-6 mx-auto w-[90%] z-50 bg-indigo-700 h-16 flex justify-between px-2 shadow-xl rounded-2xl items-center border-indigo-200">
       <p className="text-4xl font-serif font-semibold text-white cursor-pointer" onClick={goToHome}>
         CodeBlitz
       </p>
