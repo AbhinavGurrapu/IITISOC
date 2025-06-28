@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import ContestsNavbar from './ContestsNavbar';
 
 const tags = [
   'dp', 'math', 'greedy', 'graphs', 'implementation', 'strings', 'binary search', 'brute force', 'data structures', 'sortings', 'trees', 'number theory', 'combinatorics', 'dfs and similar', 'constructive algorithms', 'two pointers', 'bitmasks', 'dsu', 'geometry', 'shortest paths', 'probabilities', 'hashing', 'games', 'flows', 'interactive', 'matrices', 'fft', 'ternary search', 'meet-in-the-middle', 'string suffix structures', '2-sat', 'chinese remainder theorem', 'schedules', 'divide and conquer', 'expression parsing', 'graph matchings'
@@ -12,7 +13,6 @@ const platforms = [
   { name: 'CodeChef', key: 'codechef' },
   { name: 'AtCoder', key: 'atcoder' },
   { name: 'HackerRank', key: 'hackerrank' },
-  { name: 'All Contests', key: 'clist' },
 ];
 
 const platformLinks = {
@@ -25,7 +25,7 @@ const platformLinks = {
 const CLIST_USERNAME = 'Parthu';
 const CLIST_API_KEY = '0b2000fe1d0c548f5343e6720c8f92a0648f6377';
 
-function PracticeProblems({ userId }) {
+function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, username }) {
   const [platform, setPlatform] = useState('codeforces');
   const [problems, setProblems] = useState([]);
   const [contests, setContests] = useState([]);
@@ -105,8 +105,15 @@ function PracticeProblems({ userId }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-indigo-100 to-emerald-50 py-8 px-2">
-      <div className="max-w-5xl mx-auto bg-white/80 rounded-2xl shadow-xl p-6">
+    <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 pb-10 flex flex-col">
+      <ContestsNavbar
+        goToHome={goToHome}
+        goToCalendar={goToCalendar}
+        onSignOut={onSignOut}
+        streak={streak}
+        username={username}
+      />
+      <div className="max-w-5xl mx-auto bg-white/80 rounded-2xl shadow-xl p-6 mt-20">
         <h2 className="text-3xl font-bold text-indigo-800 mb-6 text-center">Practice Problems</h2>
         <div className="flex flex-wrap gap-4 justify-center mb-6">
           {platforms.map(p => (
