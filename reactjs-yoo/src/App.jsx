@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import HomePage from './pages/HomePage';
 import FirstPage from './pages/FirstPage';
 import SignIn from './pages/SignIn';
@@ -21,6 +21,7 @@ function App() {
     return saved ? JSON.parse(saved) : null;
   });
   const [signupFlow, setSignupFlow] = useState(false); // Track if user is in signup flow
+  const isFirstRender = useRef(true);
 
   const handleLogin = (name) => {
     setUsername(name);
@@ -46,6 +47,38 @@ function App() {
   const goToFirstPage = () => setPage('first');
   const goToCalendar = () => setPage('calendar');
   const goToPractice = () => setPage('practice');
+
+  // Sync page state with browser history
+  useEffect(() => {
+    if (isFirstRender.current) {
+      window.history.replaceState({ page }, '');
+      isFirstRender.current = false;
+    } else {
+      window.history.pushState({ page }, '');
+    }
+  }, [page]);
+
+  // Listen for browser back/forward
+  useEffect(() => {
+    const onPopState = (event) => {
+      const statePage = event.state?.page;
+      if (!statePage) return;
+      // Custom back logic
+      if ((statePage === 'signin' || statePage === 'signup')) {
+        setPage('first');
+      } else if (
+        statePage === 'calendar' ||
+        statePage === 'practice' ||
+        statePage === 'contests'
+      ) {
+        setPage('home');
+      } else {
+        setPage(statePage);
+      }
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   // Make setPage globally accessible for legacy code
   if (typeof window !== 'undefined') {

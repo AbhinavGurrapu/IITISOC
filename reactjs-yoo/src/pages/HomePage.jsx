@@ -242,8 +242,6 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
                 >
                   <ul className="py-2 text-gray-800">
                     <li className="px-4 py-2 hover:bg-indigo-100 cursor-pointer">My Profile</li>
-                    <li className="px-4 py-2 hover:bg-indigo-100 cursor-pointer">Edit Profile</li>
-                    <li className="px-4 py-2 hover:bg-indigo-100 cursor-pointer">Report a Bug</li>
                     <li className="px-4 py-2 hover:bg-red-100 text-red-600 cursor-pointer" onClick={onSignOut}>
                       Sign Out
                     </li>
