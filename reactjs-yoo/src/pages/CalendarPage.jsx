@@ -8,7 +8,7 @@ const CalendarIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-calendar text-indigo-500 drop-shadow-lg"><rect width="18" height="18" x="3" y="4" rx="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
 );
 
-export default function CalendarPage({ goToHome, onSignOut, goToCalendar }) {
+export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFirstPage }) {
   const [solvedDates, setSolvedDates] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -42,6 +42,15 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 pb-10 flex flex-col">
+      {/* Go Back Button */}
+      <button
+        className="absolute top-8 left-8 bg-white/40 hover:bg-white/70 text-indigo-700 rounded-full p-2 shadow-lg z-50 transition"
+        onClick={goToFirstPage}
+        aria-label="Go Back"
+        style={{backdropFilter: 'blur(6px)'}}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
       {/* Floating Navbar with solid color, rounded edges, and margin (copied from HomePage) */}
       <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-700 h-16 flex justify-between px-8 shadow-xl rounded-2xl items-center border border-indigo-200">
         <p className="text-4xl font-serif font-semibold text-white cursor-pointer" onClick={goToHome}>
