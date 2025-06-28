@@ -69,7 +69,7 @@ const DAILY_PROBLEM_APIS = [
   },
 ];
 
-export default function HomePage({ username, onSignOut, goToCalendar, goToHome, goToFirstPage }) {
+export default function HomePage({ username, onSignOut, goToCalendar, goToHome, goToFirstPage, goToPractice }) {
   const [dailyProblem, setDailyProblem] = useState(null);
   const [streak, setStreak] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -209,7 +209,9 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
             <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('contests')}>
               Compete
             </li>
-            <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition">Practice</li>
+            <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('practice')}>
+              Practice
+            </li>
             <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition">Help</li>
             <li
               className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition"

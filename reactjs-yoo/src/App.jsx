@@ -1,12 +1,13 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import HomePage from './pages/HomePage';
 import FirstPage from './pages/FirstPage';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
-import HomePage from './pages/HomePage';
 import CalendarPage from './pages/CalendarPage';
 import ContestListByDay from './components/ContestListByDay';
 import FavoriteContests from './components/FavoriteContests';
 import PersonalInfo from './pages/PersonalInfo';
+import PracticeProblems from './components/PracticeProblems';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import Footer from './components/Footer';
@@ -40,7 +41,13 @@ function App() {
     setSignupFlow(false); // Reset after info is filled
   };
 
-  // Expose setPage globally for navbar navigation
+  // Navigation functions
+  const goToHome = () => setPage('home');
+  const goToFirstPage = () => setPage('first');
+  const goToCalendar = () => setPage('calendar');
+  const goToPractice = () => setPage('practice');
+
+  // Make setPage globally accessible for legacy code
   if (typeof window !== 'undefined') {
     window.setPage = setPage;
   }
@@ -128,6 +135,14 @@ function App() {
             <FavoriteContests userId={username || 'demo'} />
           </div>
         </div>
+      )}
+      {page === 'practice' && (
+        <PracticeProblems
+          goToHome={goToHome}
+          goToFirstPage={goToFirstPage}
+          goToCalendar={goToCalendar}
+          // ...other props, e.g. userId...
+        />
       )}
       <Footer />
     </div>
