@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Card from 'react-bootstrap/Card';
-import PersonalInfo from './PersonalInfo';
 
 export default function HomePage({ username, onSignOut, goToCalendar, goToHome, goToFirstPage }) {
   const [dailyProblem, setDailyProblem] = useState(null);
   const [streak, setStreak] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [solvedToday, setSolvedToday] = useState(false);
-  const [personalInfo, setPersonalInfo] = useState(() => {
-    const saved = localStorage.getItem('personalInfo');
-    return saved ? JSON.parse(saved) : null;
-  });
   const dropdownRef = useRef(null);
 
   const generateDailyProblem = () => ({
@@ -49,11 +44,6 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
     localStorage.removeItem('streak');
     localStorage.removeItem('solvedDates');
     onSignOut();
-  };
-
-  const handlePersonalInfoSubmit = (info) => {
-    setPersonalInfo(info);
-    localStorage.setItem('personalInfo', JSON.stringify(info));
   };
 
   const contests = [
@@ -117,10 +107,6 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [dropdownOpen]);
-
-  if (!personalInfo) {
-    return <PersonalInfo onSubmit={handlePersonalInfoSubmit} />;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
@@ -196,7 +182,7 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
       {/* Add padding to prevent content from being hidden behind navbar */}
       <div className="pt-28 pb-4 flex flex-col items-center">
         <h1 className="font-mono font-extrabold text-3xl md:text-4xl text-indigo-800 drop-shadow text-center">
-          Welcome {personalInfo.firstName}! Looking For Contests?
+          Welcome {username}! Looking For Contests?
         </h1>
         <p className="text-lg text-indigo-700/80 font-medium max-w-xl text-center mt-2">
           Explore upcoming contests, track your streak, and solve a daily problem to keep your skills sharp!
