@@ -28,7 +28,7 @@ function ContestsNavbar({ goToHome, goToCalendar, onSignOut, streak, username })
       <div className="flex items-center gap-6">
         <ul className="flex justify-end items-center gap-2">
           <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('contests')}>Compete</li>
-          <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition">Practice</li>
+          <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('practice')}>Practice</li>
           <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition">Help</li>
           <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={goToCalendar}>My Calendar</li>
           <div className="relative flex items-center ml-4" style={{zIndex: 60}} ref={dropdownRef}>
