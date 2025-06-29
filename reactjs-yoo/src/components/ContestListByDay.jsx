@@ -25,6 +25,31 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
   const [groupedContests, setGroupedContests] = useState({});
   const [favLoading, setFavLoading] = useState(null);
   const [selectedPlatforms, setSelectedPlatforms] = useState(allowedPlatforms);
+  const [favoriteContests, setFavoriteContests] = useState([]); // store contest ids
+  const [favoriteContestObjs, setFavoriteContestObjs] = useState([]); // store full favorite objects
+  const [toast, setToast] = useState(null);
+  const debounceRef = useState({})[0];
+
+  // Show toast for 2s
+  const showToast = (msg, type = 'error') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 2000);
+  };
+
+  // Fetch favorite contests for user
+  useEffect(() => {
+    if (!userId) return;
+    axios.get(`http://localhost:3001/api/favorites/contest?userId=${userId || 'demo'}`)
+      .then(res => {
+        const favs = res.data.favorites || [];
+        setFavoriteContestObjs(favs);
+        setFavoriteContests(favs.map(f => f.contest.id));
+      })
+      .catch(() => {
+        setFavoriteContests([]);
+        setFavoriteContestObjs([]);
+      });
+  }, [userId]);
 
   useEffect(() => {
     axios.get('http://localhost:3001/api/contests')
@@ -65,28 +90,40 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
   }, [selectedPlatforms]);
 
   const favoriteContest = async (contest) => {
-    setFavLoading(contest.id);
+    const key = contest.id;
+    if (debounceRef[key]) return;
+    debounceRef[key] = true;
+    setFavLoading(key);
     try {
-      await axios.post('http://localhost:3001/api/favorites/contest', {
+      const res = await axios.post('http://localhost:3001/api/favorites/contest', {
         userId: userId || 'demo',
         contest
       });
-      alert('Contest added to favorites!');
+      setFavoriteContests(prev => [...prev, key]);
+      setFavoriteContestObjs(prev => [...prev, res.data.favorite || { contest }]);
     } catch (err) {
-      alert('Failed to favorite contest');
+      showToast('Failed to favorite contest', 'error');
     }
     setFavLoading(null);
+    setTimeout(() => { debounceRef[key] = false; }, 500);
   };
 
   const removeFavoriteContest = async (contest) => {
-    setFavLoading('remove-' + contest.id);
+    const key = contest.id;
+    setFavLoading(key);
     try {
-      await axios.delete('http://localhost:3001/api/favorites/contest', { data: { userId: userId || 'demo', contest } });
-      alert('Contest removed from favorites!');
+      await axios.delete('http://localhost:3001/api/favorites/contest', { data: { userId: userId || 'demo', contest: { id: contest.id } } });
+      setFavoriteContests(prev => prev.filter(k => k !== key));
+      setFavoriteContestObjs(prev => prev.filter(fav => fav.contest.id !== key));
     } catch (err) {
-      alert('Failed to remove favorite');
+      setFavoriteContests(prev => prev.filter(k => k !== key));
+      setFavoriteContestObjs(prev => prev.filter(fav => fav.contest.id !== key));
+      if (!(err.response && err.response.status === 404)) {
+        showToast('Failed to remove favorite', 'error');
+      }
     }
     setFavLoading(null);
+    setTimeout(() => { debounceRef[key] = false; }, 500);
   };
 
   return (
@@ -145,13 +182,21 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
                         {platformLabels[c.resource] || c.resource}
                       </span>
                       <button
-                        style={{ color: 'red', fontSize: '1.5em' }}
-                        onClick={() => favoriteContest(c)}
+                        onClick={() => favoriteContests.includes(c.id) ? removeFavoriteContest(c) : favoriteContest(c)}
                         disabled={favLoading === c.id}
-                        title="Favorite this contest"
+                        title={favoriteContests.includes(c.id) ? 'Remove from favorites' : 'Favorite this contest'}
                         className="ml-2 hover:scale-125 transition-transform"
+                        style={{ background: 'none', border: 'none', outline: 'none', padding: 0, cursor: 'pointer' }}
                       >
-                        {favLoading === c.id ? '❤️‍🔥' : '❤️'}
+                        {favoriteContests.includes(c.id) ? (
+                          <svg width="28" height="28" viewBox="0 0 24 24" fill="red" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 21C12 21 4 13.36 4 8.5C4 5.42 6.42 3 9.5 3C11.24 3 12.91 3.81 14 5.08C15.09 3.81 16.76 3 18.5 3C21.58 3 24 5.42 24 8.5C24 13.36 16 21 16 21H12Z" />
+                          </svg>
+                        ) : (
+                          <svg width="28" height="28" viewBox="0 0 24 24" fill="white" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M12 21C12 21 4 13.36 4 8.5C4 5.42 6.42 3 9.5 3C11.24 3 12.91 3.81 14 5.08C15.09 3.81 16.76 3 18.5 3C21.58 3 24 5.42 24 8.5C24 13.36 16 21 16 21H12Z" />
+                          </svg>
+                        )}
                       </button>
                     </div>
                     <div className="font-serif font-extrabold text-2xl text-indigo-900 mb-2 leading-tight line-clamp-2">{c.event}</div>
@@ -186,6 +231,9 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap text-yellow-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span>Streak: {typeof window !== 'undefined' && localStorage.getItem('streak') ? localStorage.getItem('streak') : 0}</span>
       </div>
+      {toast && (
+        <div className={`fixed top-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg font-semibold text-lg ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}>{toast.msg}</div>
+      )}
     </div>
   );
 }

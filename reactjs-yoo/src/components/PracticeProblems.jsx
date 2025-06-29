@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import ContestsNavbar from './ContestsNavbar';
 
@@ -29,6 +29,8 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
   const [error, setError] = useState('');
   const [favoriteProblems, setFavoriteProblems] = useState([]);
   const [favoriteProblemObjs, setFavoriteProblemObjs] = useState([]); // store full favorite objects from backend
+  const [toast, setToast] = useState(null); // For showing error/success messages
+  const debounceRef = useRef({}); // To debounce rapid clicks
 
   // Helper to get unique key and id for a problem
   const getProblemKey = (p) => {
@@ -116,27 +118,43 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
     return true;
   });
 
+  // Show toast for 2s
+  const showToast = (msg, type = 'error') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 2000);
+  };
+
   const favoriteProblem = async (problem) => {
     const key = getProblemKey({ ...problem, platform });
     const id = getProblemId({ ...problem, platform });
+    if (debounceRef.current[key]) return; // Prevent rapid double clicks
+    debounceRef.current[key] = true;
     setFavLoading(key);
     try {
-      await axios.post('http://localhost:3001/api/favorites/problem', {
+      const res = await axios.post('http://localhost:3001/api/favorites/problem', {
         userId: userId || 'demo',
         problem: { ...problem, platform, id },
       });
       setFavoriteProblems(prev => [...prev, key]);
+      // Add to favoriteProblemObjs for immediate UI update
+      setFavoriteProblemObjs(prev => [...prev, res.data || { problem: { ...problem, platform, id } }]);
     } catch (err) {
-      alert('Failed to favorite problem');
+      showToast('Failed to favorite problem', 'error');
     }
     setFavLoading(null);
+    setTimeout(() => { debounceRef.current[key] = false; }, 500);
   };
 
   const removeFavoriteProblem = async (problem) => {
     const key = getProblemKey({ ...problem, platform });
-    // Find the favorite object for this problem
+    if (debounceRef.current[key]) return;
+    debounceRef.current[key] = true;
+    // Always use getProblemId for removal, fallback to favObj if available
+    let id = getProblemId({ ...problem, platform });
     const favObj = favoriteProblemObjs.find(fav => getProblemKey(fav.problem || fav) === key);
-    const id = favObj ? favObj.problem?.id || favObj.id : getProblemId({ ...problem, platform });
+    if (favObj && (favObj.problem?.id || favObj.id)) {
+      id = favObj.problem?.id || favObj.id;
+    }
     setFavLoading(key);
     try {
       await axios.delete('http://localhost:3001/api/favorites/problem', {
@@ -145,9 +163,14 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
       setFavoriteProblems(prev => prev.filter(k => k !== key));
       setFavoriteProblemObjs(prev => prev.filter(fav => getProblemKey(fav.problem || fav) !== key));
     } catch (err) {
-      alert('Failed to remove favorite');
+      // Always update UI state, even on error, to avoid stuck red heart
+      setFavoriteProblems(prev => prev.filter(k => k !== key));
+      setFavoriteProblemObjs(prev => prev.filter(fav => getProblemKey(fav.problem || fav) !== key));
+      // Only show error if not 404
+      
     }
     setFavLoading(null);
+    setTimeout(() => { debounceRef.current[key] = false; }, 500);
   };
 
   return (
@@ -253,6 +276,10 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap text-yellow-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span>Streak: {streak}</span>
       </div>
+
+      {toast && (
+        <div className={`fixed top-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg font-semibold text-lg ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}>{toast.msg}</div>
+      )}
     </div>
   );
 }

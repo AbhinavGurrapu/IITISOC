@@ -30,4 +30,43 @@ router.post('/contest', async (req, res) => {
   }
 });
 
+// DELETE /api/favorites/contest
+router.delete('/contest', async (req, res) => {
+  const { userId, contest } = req.body;
+  if (!userId || !contest || !contest.id) {
+    return res.status(400).json({ error: 'userId and contest.id required' });
+  }
+  try {
+    const removed = await FavoriteContest.findOneAndDelete({
+      userId,
+      'contest.id': contest.id
+    });
+    if (!removed) {
+      return res.status(404).json({ error: 'Favorite contest not found' });
+    }
+    // Remove reference from User (optional)
+    await User.updateOne(
+      { $or: [{ _id: userId }, { name: userId }] },
+      { $pull: { favoriteContests: removed._id } }
+    );
+    res.json({ message: 'Contest removed from favorites' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to remove favorite', details: err.message });
+  }
+});
+
+// GET /api/favorites/contest?userId=...
+router.get('/contest', async (req, res) => {
+  const { userId } = req.query;
+  if (!userId) {
+    return res.status(400).json({ error: 'userId required' });
+  }
+  try {
+    const favorites = await FavoriteContest.find({ userId });
+    res.json({ favorites });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch favorites', details: err.message });
+  }
+});
+
 module.exports = router;
