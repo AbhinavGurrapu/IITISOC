@@ -33,7 +33,7 @@ export default function FavouritesPage({ userId, goToHome }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 flex flex-col items-center py-10">
+    <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col items-center py-10">
       <ContestsNavbar
         goToHome={goToHome}
         goToCalendar={() => window.setPage && window.setPage('calendar')}
@@ -45,29 +45,29 @@ export default function FavouritesPage({ userId, goToHome }) {
         streak={0}
         username={userId}
       />
-      <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-indigo-900/40 p-8 w-full max-w-3xl flex flex-col items-center mt-24">
-        <h1 className="text-4xl font-serif font-bold text-indigo-100 mb-8">My Favourites</h1>
-        <button className="mb-8 px-6 py-2 bg-indigo-700 hover:bg-indigo-900 text-yellow-300 rounded-xl font-semibold shadow transition" onClick={goToHome}>Back to Home</button>
+      <div className="bg-white/90 rounded-3xl shadow-2xl border border-indigo-200 p-8 w-full max-w-3xl flex flex-col items-center mt-24">
+        <h1 className="text-4xl font-serif font-bold text-indigo-800 mb-8">My Favourites</h1>
+        <button className="mb-8 px-6 py-2 bg-indigo-600 hover:bg-indigo-800 text-white rounded-xl font-semibold shadow transition" onClick={goToHome}>Back to Home</button>
 
         {loading ? (
-          <div className="text-indigo-200 font-semibold">Loading favourites...</div>
+          <div className="text-indigo-700 font-semibold">Loading favourites...</div>
         ) : (
           <div className="w-full flex flex-col md:flex-row gap-8">
             {/* Practice Problems */}
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-indigo-200 mb-4">Practice Problems</h2>
+              <h2 className="text-2xl font-bold text-indigo-700 mb-4">Practice Problems</h2>
               {favoriteProblems.length === 0 ? (
-                <div className="text-indigo-400">No favourite practice problems yet.</div>
+                <div className="text-indigo-500">No favourite practice problems yet.</div>
               ) : (
-                <ul className="divide-y divide-indigo-900/30">
+                <ul className="divide-y divide-indigo-100">
                   {favoriteProblems.map((p, i) => {
                     const key = p.problem?.id || p.problem?._id || i;
                     return (
                       <li key={key} className="py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                        <a href={p.problem?.link || p.problem?.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-indigo-100 hover:underline">
+                        <a href={p.problem?.link || p.problem?.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-indigo-800 hover:underline">
                           {p.problem?.title || p.problem?.name || 'Untitled'}
                         </a>
-                        {p.problem?.platform && <span className="text-sm text-indigo-300">({p.problem.platform})</span>}
+                        {p.problem?.platform && <span className="text-sm text-indigo-600">({p.problem.platform})</span>}
                         <button
                           className="ml-2 px-2 py-1 text-xs bg-red-100 hover:bg-red-300 text-red-700 rounded"
                           onClick={async () => {
@@ -100,21 +100,21 @@ export default function FavouritesPage({ userId, goToHome }) {
 
             {/* Favorite Contests */}
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-indigo-200 mb-4">Contests</h2>
+              <h2 className="text-2xl font-bold text-indigo-700 mb-4">Contests</h2>
               {favoriteContests.length === 0 ? (
-                <div className="text-indigo-400">No favourite contests yet.</div>
+                <div className="text-indigo-500">No favourite contests yet.</div>
               ) : (
-                <ul className="divide-y divide-indigo-900/30">
+                <ul className="divide-y divide-indigo-100">
                   {favoriteContests.map((c, i) => {
                     const key = c.contest?.id || c.contest?._id || i;
                     const contestObj = c.contest?.id ? c.contest : c;
 
                     return (
                       <li key={key} className="py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                        <a href={contestObj.link || contestObj.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-indigo-100 hover:underline">
+                        <a href={contestObj.link || contestObj.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-indigo-800 hover:underline">
                           {contestObj.title || contestObj.name || contestObj.event || 'Untitled'}
                         </a>
-                        {contestObj.platform && <span className="text-sm text-indigo-300">({contestObj.platform})</span>}
+                        {contestObj.platform && <span className="text-sm text-indigo-600">({contestObj.platform})</span>}
                         <button
                           className="ml-2 px-2 py-1 text-xs bg-red-100 hover:bg-red-300 text-red-700 rounded"
                           onClick={async () => {
