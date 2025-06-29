@@ -198,7 +198,6 @@ function App() {
           goToHome={goToHome}
           goToFirstPage={goToFirstPage}
           goToCalendar={goToCalendar}
-          // ...other props
         />
       )}
       {page === 'favourites' && (

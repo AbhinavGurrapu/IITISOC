@@ -153,6 +153,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 pb-10 flex flex-col">
       <ContestsNavbar goToHome={goToHome} goToCalendar={goToCalendar} onSignOut={onSignOut} streak={streak} username={username} />
+      <div className="mb-10"></div>
       <div className="max-w-5xl mx-auto bg-white/80 rounded-2xl shadow-xl p-6 mt-20">
         <h2 className="text-3xl font-bold text-indigo-800 mb-6 text-center">Practice Problems</h2>
         <div className="flex flex-wrap gap-4 justify-center mb-6">
