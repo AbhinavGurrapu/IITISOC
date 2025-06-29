@@ -12,13 +12,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 import Footer from './components/Footer';
 import ContestsNavbar from './components/ContestsNavbar';
-import MyProfile from './pages/MyProfile';
-import FavouritesPage from './pages/FavouritesPage';
+import MyProfile from './pages/MyProfile'; // Import MyProfile component
+import FavouritesPage from './pages/FavouritesPage'; // Import FavouritesPage component
 
 function App() {
   const [page, setPage] = useState(() => {
+    // Check if user is already logged in
     const savedUsername = localStorage.getItem('username');
-    return savedUsername ? 'home' : 'first';
+    return savedUsername ? 'home' : 'home';
   });
   const [username, setUsername] = useState(() => {
     return localStorage.getItem('username') || '';
@@ -27,33 +28,20 @@ function App() {
     const saved = localStorage.getItem('personalInfo');
     return saved ? JSON.parse(saved) : null;
   });
-  const [signupFlow, setSignupFlow] = useState(false);
+  const [signupFlow, setSignupFlow] = useState(false); // Track if user is in signup flow
   const isFirstRender = useRef(true);
-
-  // ✅ Read ?name=xyz from URL and set user
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const name = params.get('name');
-    if (name) {
-      localStorage.setItem('name', name);
-      localStorage.setItem('username', name);
-      setUsername(name);
-      setPage('home');
-      window.history.replaceState({}, document.title, '/');
-    }
-  }, []);
 
   const handleLogin = (name) => {
     setUsername(name);
-    localStorage.setItem('username', name);
-    setSignupFlow(false);
+    localStorage.setItem('username', name); // Save username to localStorage
+    setSignupFlow(false); // Not in signup flow, so skip PersonalInfo
     setPage('home');
   };
 
   const handleSignUp = (name) => {
     setUsername(name);
-    localStorage.setItem('username', name);
-    setSignupFlow(true);
+    localStorage.setItem('username', name); // Save username to localStorage
+    setSignupFlow(true); // In signup flow, require PersonalInfo
     setPage('personalinfo');
   };
 
@@ -61,15 +49,17 @@ function App() {
     setPersonalInfo(info);
     localStorage.setItem('personalInfo', JSON.stringify(info));
     setPage('home');
-    setSignupFlow(false);
+    setSignupFlow(false); // Reset after info is filled
   };
 
+  // Navigation functions
   const goToHome = () => setPage('home');
   const goToFirstPage = () => setPage('first');
   const goToCalendar = () => setPage('calendar');
   const goToPractice = () => setPage('practice');
   const goToProfile = () => setPage('profile');
 
+  // Sync page state with browser history
   useEffect(() => {
     if (isFirstRender.current) {
       window.history.replaceState({ page }, '');
@@ -79,11 +69,13 @@ function App() {
     }
   }, [page]);
 
+  // Listen for browser back/forward
   useEffect(() => {
     const onPopState = (event) => {
       const statePage = event.state?.page;
       if (!statePage) return;
-      if (statePage === 'signin' || statePage === 'signup') {
+      // Custom back logic
+      if ((statePage === 'signin' || statePage === 'signup')) {
         setPage('first');
       } else if (
         statePage === 'calendar' ||
@@ -99,6 +91,7 @@ function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
+  // Make setPage globally accessible for legacy code
   if (typeof window !== 'undefined') {
     window.setPage = setPage;
   }
@@ -179,6 +172,7 @@ function App() {
       {page === 'contests' && (
         <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
           <div className="pt-4">
+            
             <ContestListByDay 
               userId={username || 'demo'}
               goToHome={() => setPage('home')}

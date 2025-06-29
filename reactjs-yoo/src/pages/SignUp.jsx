@@ -50,7 +50,7 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
           <p className="text-3xl font-serif font-bold text-white mb-8 drop-shadow-lg tracking-wide">
             Create your CodeBlitz Account
           </p>
-          <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
+          <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3.5">
             <div className="flex flex-col items-start w-full">
               <input
                 type="text"
@@ -81,7 +81,7 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
                 <span className="text-red-500 text-xs mt-1 ml-1">* You have to fill this to proceed</span>
               )}
             </div>
-            <div className="flex flex-col items-start w-full">
+            <div className="flex flex-col items-start w-full relative">
               <input
                 type={showPass ? "text" : "password"}
                 placeholder="Password"
@@ -92,11 +92,22 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
                   setShowMismatchError(false);
                   setShowPassLengthError(false);
                 }}
-                className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition"
+                className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition pr-10"
               />
-              <label className="flex items-center gap-2 mt-1 ml-1 text-xs text-indigo-700">
-                <input type="checkbox" checked={showPass} onChange={() => setShowPass((v) => !v)} /> Show Password
-              </label>
+              <span
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-indigo-500"
+                onClick={() => setShowPass((v) => !v)}
+                style={{ userSelect: 'none' }}
+                tabIndex={0}
+                role="button"
+                aria-label={showPass ? 'Hide password' : 'Show password'}
+              >
+                {showPass ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.81 21.81 0 0 1 5.06-6.06M1 1l22 22"/><circle cx="12" cy="12" r="3"/></svg>
+                )}
+              </span>
               {showPassError && (
                 <span className="text-red-500 text-xs mt-1 ml-1">* You have to fill this to proceed</span>
               )}
@@ -104,7 +115,7 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
                 <span className="text-red-500 text-xs mt-1 ml-1">* Password should at least contain 8 characters</span>
               )}
             </div>
-            <div className="flex flex-col items-start w-full">
+            <div className="flex flex-col items-start w-full relative">
               <input
                 type={showConfirmPass ? "text" : "password"}
                 placeholder="Confirm Password"
@@ -114,11 +125,22 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
                   setShowConfirmPassError(false);
                   setShowMismatchError(false);
                 }}
-                className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition"
+                className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition pr-10"
               />
-              <label className="flex items-center gap-2 mt-1 ml-1 text-xs text-indigo-700">
-                <input type="checkbox" checked={showConfirmPass} onChange={() => setShowConfirmPass((v) => !v)} /> Show Password
-              </label>
+              <span
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-indigo-500"
+                onClick={() => setShowConfirmPass((v) => !v)}
+                style={{ userSelect: 'none' }}
+                tabIndex={0}
+                role="button"
+                aria-label={showConfirmPass ? 'Hide password' : 'Show password'}
+              >
+                {showConfirmPass ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.81 21.81 0 0 1 5.06-6.06M1 1l22 22"/><circle cx="12" cy="12" r="3"/></svg>
+                )}
+              </span>
               {showConfirmPassError && (
                 <span className="text-red-500 text-xs mt-1 ml-1">* You have to fill this to proceed</span>
               )}
@@ -134,7 +156,7 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
               />
               I agree to{' '}
               <a
-                href="/"
+                href="#"
                 className="text-blue-200 underline hover:text-blue-400"
               >
                 terms and conditions

@@ -5,6 +5,7 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
   const [password, setPassword] = useState('');
   const [showUsernameError, setShowUsernameError] = useState(false);
   const [showPasswordError, setShowPasswordError] = useState(false);
+  const [showPass, setShowPass] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -12,10 +13,8 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
     let passwordMissing = !password;
     setShowUsernameError(usernameMissing);
     setShowPasswordError(passwordMissing);
-    if (usernameMissing || passwordMissing) {
-      return;
-    }
-    onLogin(username.trim()); // send to App
+    if (usernameMissing || passwordMissing) return;
+    onLogin(username.trim());
   };
 
   return (
@@ -30,8 +29,8 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
     >
       
       <div className="relative bg-white/20 backdrop-blur-lg shadow-2xl h-auto w-96 text-center p-10 rounded-3xl border border-white/30 flex flex-col items-center">
-        <p className="text-4xl font-serif font-bold text-white mb-8 drop-shadow-lg tracking-wide">
-          CodeBlitz
+        <p className="text-3xl font-serif font-bold text-white mb-8 drop-shadow-lg tracking-wide">
+          Login to your CodeBlitz Account
         </p>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-6">
           <div className="flex flex-col items-start w-full">
@@ -52,17 +51,31 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
               </span>
             )}
           </div>
-          <div className="flex flex-col items-start w-full">
+          <div className="flex flex-col items-start w-full relative">
             <input
-              type="password"
+              type={showPass ? "text" : "password"}
               placeholder="Password"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
                 setShowPasswordError(false);
               }}
-              className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition"
+              className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition pr-10"
             />
+            <span
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-indigo-500"
+              onClick={() => setShowPass((v) => !v)}
+              style={{ userSelect: 'none' }}
+              tabIndex={0}
+              role="button"
+              aria-label={showPass ? 'Hide password' : 'Show password'}
+            >
+              {showPass ? (
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a21.81 21.81 0 0 1 5.06-6.06M1 1l22 22"/><circle cx="12" cy="12" r="3"/></svg>
+              )}
+            </span>
             {showPasswordError && (
               <span className="text-red-500 text-xs mt-1 ml-1">
                 {' '}
@@ -95,7 +108,6 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
             onClick={() => window.location.href = 'http://localhost:3001/auth/github'}
             title="Sign in with GitHub"
           ></i>
-          <i className="fab fa-facebook text-2xl text-white/80 hover:text-white cursor-pointer transition"></i>
         </div>
         <p className="text-white/80 mt-2 text-sm">
           Don't have an account?{' '}
