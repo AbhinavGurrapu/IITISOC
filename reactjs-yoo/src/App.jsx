@@ -5,7 +5,6 @@ import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import CalendarPage from './pages/CalendarPage';
 import ContestListByDay from './components/ContestListByDay';
-import FavoriteContests from './components/FavoriteContests';
 import PersonalInfo from './pages/PersonalInfo';
 import PracticeProblems from './components/PracticeProblems';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -220,7 +219,6 @@ function App() {
               streak={0}
               username={username}
             />
-            <FavoriteContests userId={username || 'demo'} />
           </div>
         </div>
       )}

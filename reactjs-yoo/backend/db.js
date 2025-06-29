@@ -4,10 +4,7 @@ require('dotenv').config({ path: __dirname + '/.env' });
 const MONGO_URI = process.env.MONGODB_URI;
 
 function connectDB() {
-  mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  mongoose.connect(MONGO_URI);
 
   mongoose.connection.on('connected', () => {
     console.log('MongoDB connected');
