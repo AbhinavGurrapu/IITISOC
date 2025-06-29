@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import ContestsNavbar from '../components/ContestsNavbar';
 
@@ -28,7 +28,7 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
   const [favoriteContests, setFavoriteContests] = useState([]); // store contest ids
   const [favoriteContestObjs, setFavoriteContestObjs] = useState([]); // store full favorite objects
   const [toast, setToast] = useState(null);
-  const debounceRef = useState({})[0];
+  const debounceRef = useRef({}); // To debounce rapid clicks
 
   // Show toast for 2s
   const showToast = (msg, type = 'error') => {
@@ -91,8 +91,8 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
 
   const favoriteContest = async (contest) => {
     const key = contest.id;
-    if (debounceRef[key]) return;
-    debounceRef[key] = true;
+    if (debounceRef.current[key]) return;
+    debounceRef.current[key] = true;
     setFavLoading(key);
     try {
       const res = await axios.post('http://localhost:3001/api/favorites/contest', {
@@ -105,11 +105,13 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
       showToast('Failed to favorite contest', 'error');
     }
     setFavLoading(null);
-    setTimeout(() => { debounceRef[key] = false; }, 500);
+    setTimeout(() => { debounceRef.current[key] = false; }, 500);
   };
 
   const removeFavoriteContest = async (contest) => {
     const key = contest.id;
+    if (debounceRef.current[key]) return;
+    debounceRef.current[key] = true;
     setFavLoading(key);
     try {
       await axios.delete('http://localhost:3001/api/favorites/contest', { data: { userId: userId || 'demo', contest: { id: contest.id } } });
@@ -118,12 +120,10 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
     } catch (err) {
       setFavoriteContests(prev => prev.filter(k => k !== key));
       setFavoriteContestObjs(prev => prev.filter(fav => fav.contest.id !== key));
-      if (!(err.response && err.response.status === 404)) {
-        showToast('Failed to remove favorite', 'error');
-      }
+      
     }
     setFavLoading(null);
-    setTimeout(() => { debounceRef[key] = false; }, 500);
+    setTimeout(() => { debounceRef.current[key] = false; }, 500);
   };
 
   return (
