@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
   const [username, setUsername] = useState('');
@@ -13,8 +14,9 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
   const [showPassLengthError, setShowPassLengthError] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const [signupError, setSignupError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let usernameMissing = !username.trim();
     let emailMissing = !email.trim();
@@ -28,10 +30,27 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
     setShowConfirmPassError(confirmPassMissing);
     setShowMismatchError(mismatch);
     setShowPassLengthError(passLength);
+    setSignupError('');
     if (usernameMissing || emailMissing || passMissing || confirmPassMissing || mismatch || passLength) {
       return;
     }
-    onSignUp(username.trim()); // send to App
+    try {
+      const res = await axios.post('http://localhost:3001/api/signup', {
+        name: username.trim(),
+        email: email.trim(),
+        password: pass,
+        profilePicture: ''
+      });
+      if (res.data && res.data.user) {
+        onSignUp(res.data.user.name);
+      } else {
+        setSignupError('Signup failed. Please try again.');
+      }
+    } catch (err) {
+      setSignupError(
+        err.response?.data?.error || 'Signup failed. Please try again.'
+      );
+    }
   };
 
   return (
@@ -162,6 +181,9 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
                 terms and conditions
               </a>
             </label>
+            {signupError && (
+              <span className="text-red-500 text-xs mt-1 ml-1 text-center">{signupError}</span>
+            )}
             <button
               type="submit"
               className="bg-gradient-to-r from-indigo-500 via-sky-500 to-pink-400 hover:from-pink-500 hover:to-yellow-400 text-white font-semibold rounded-lg mt-2 px-4 py-2 w-full shadow-md transition-all duration-200 hover:scale-105 disabled:opacity-60"
