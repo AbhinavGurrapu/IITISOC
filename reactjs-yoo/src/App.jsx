@@ -18,9 +18,8 @@ import axios from 'axios';
 
 function App() {
   const [page, setPage] = useState(() => {
-    // Check if user is already logged in
-    const savedUsername = localStorage.getItem('username');
-    return savedUsername ? 'home' : 'home';
+    // Always restore the last visited page from localStorage, default to 'first' if not set
+    return localStorage.getItem('currentPage') || 'first';
   });
   const [username, setUsername] = useState(() => {
     return localStorage.getItem('username') || '';
@@ -87,7 +86,8 @@ function App() {
       } else if (
         statePage === 'calendar' ||
         statePage === 'practice' ||
-        statePage === 'contests'
+        statePage === 'contests' ||
+        statePage === 'favourites'
       ) {
         setPage('home');
       } else {
@@ -118,6 +118,11 @@ function App() {
       window.history.replaceState({}, document.title, window.location.pathname);
     }
   }, []);
+
+  // Persist the current page in localStorage on every page change
+  useEffect(() => {
+    localStorage.setItem('currentPage', page);
+  }, [page]);
 
   // Make setPage globally accessible for legacy code
   if (typeof window !== 'undefined') {
