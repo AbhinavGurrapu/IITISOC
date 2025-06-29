@@ -1,20 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showUsernameError, setShowUsernameError] = useState(false);
   const [showPasswordError, setShowPasswordError] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [loginError, setLoginError] = useState('');
-
-  useEffect(() => {
-    document.body.classList.toggle('night-mode', theme === 'dark');
-    document.body.classList.toggle('day-mode', theme === 'light');
-    localStorage.setItem('theme', theme);
-  }, [theme]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,7 +24,7 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
         res = await axios.post('http://localhost:3001/api/login', { email: username.trim() });
       } else {
         // Try to get user by username, then login with their email
-        const userRes = await axios.get(`http://localhost:3001/api/users`);
+        const userRes = await axios.get('http://localhost:3001/api/users');
         const foundUser = Array.isArray(userRes.data)
           ? userRes.data.find(u => u.name === username.trim())
           : null;
@@ -51,12 +44,15 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
   };
 
   return (
-    <div className={
-      `min-h-screen flex flex-col transition-colors duration-300 ` +
-      (theme === 'dark'
-        ? 'bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 text-indigo-100'
-        : 'bg-gradient-to-br from-white via-blue-100 to-yellow-100 text-black')
-    }>
+    <div
+      className="flex h-screen w-screen justify-center items-center"
+      style={{
+        backgroundImage: 'url("new.png")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
       
       <div className="relative bg-white/20 backdrop-blur-lg shadow-2xl h-auto w-96 text-center p-10 rounded-3xl border border-white/30 flex flex-col items-center">
         <p className="text-3xl font-serif font-bold text-white mb-8 drop-shadow-lg tracking-wide">

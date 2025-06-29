@@ -4,7 +4,6 @@ import 'react-calendar/dist/Calendar.css';
 import './CustomCalendar.css'; // for custom styling
 import ContestsNavbar from '../components/ContestsNavbar';
 
-// Lucide Calendar Icon SVG
 const CalendarIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-calendar text-indigo-500 drop-shadow-lg">
     <rect width="18" height="18" x="3" y="4" rx="2"/>
@@ -23,6 +22,19 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
     document.body.classList.toggle('night-mode', theme === 'dark');
     document.body.classList.toggle('day-mode', theme === 'light');
     localStorage.setItem('theme', theme);
+
+    const weekdayEls = document.querySelectorAll('.react-calendar__month-view__weekdays abbr');
+    const navEls = document.querySelectorAll('.react-calendar__navigation button');
+
+    const newClass = theme === 'dark' ? 'text-black font-semibold' : 'text-indigo-900 font-semibold';
+
+    weekdayEls.forEach(el => {
+      el.className = newClass;
+    });
+
+    navEls.forEach(el => {
+      el.className = newClass;
+    });
   }, [theme]);
 
   const getStreakKey = () => `streak_${username || 'demo'}`;
@@ -32,7 +44,6 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
     const loadState = () => {
       const saved = JSON.parse(localStorage.getItem(getSolvedDatesKey()) || '[]');
       setSolvedDates(saved);
-      // Streak logic: check if yesterday was solved, else reset
       if (saved.length > 0) {
         const sorted = saved.slice().sort();
         const lastDate = sorted[sorted.length - 1];
@@ -50,17 +61,15 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
       }
     };
     loadState();
-    // Listen for localStorage changes (from PracticeProblems or other tabs)
     const handleStorage = (e) => {
       if (
         e.key === getStreakKey() ||
         e.key === getSolvedDatesKey() ||
-        e.key === null // null means clear() was called
+        e.key === null
       ) {
         loadState();
       }
     };
-    // Listen for visibility change (when returning to this tab/page)
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
         loadState();
@@ -85,7 +94,6 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
     const updated = [...solvedDates, today];
     setSolvedDates(updated);
     localStorage.setItem(getSolvedDatesKey(), JSON.stringify(updated));
-    // Streak logic
     let newStreak = 1;
     if (updated.length > 1) {
       const sorted = updated.slice().sort();
@@ -115,13 +123,14 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
         theme={theme}
         setTheme={setTheme}
       />
+
       {/* Title & Subtitle */}
       <div className={
         'flex flex-col items-center mt-4 sm:mt-2 mb-10 sm:mb-4 px-2 w-full ' +
         (theme === 'dark' ? '' : 'text-black')
       }>
         <div className="mt-16"></div>
-        <CalendarIcon />   
+        <CalendarIcon />
         <h1 className={
           'text-center font-mono font-extrabold text-2xl sm:text-3xl md:text-4xl py-2 ' +
           (theme === 'dark' ? 'text-indigo-100' : 'text-black')
@@ -129,32 +138,44 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
         <p className={
           'text-center text-base sm:text-lg font-medium max-w-xs sm:max-w-xl ' +
           (theme === 'dark' ? 'text-indigo-300' : 'text-gray-800')
-        }>Track your daily progress and stay motivated! Days you solved a problem are highlighted in green.</p>
+        }>
+          Track your daily progress and stay motivated! Days you solved a problem are highlighted in green.
+        </p>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2 sm:mt-4 w-full max-w-xs sm:max-w-none justify-center items-center">
           <button
-            className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-xl font-bold text-white shadow transition ${isSolvedDate(new Date()) ? 'bg-gray-700 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
+            className={
+              theme === 'dark'
+                ? 'px-4 py-2 rounded-lg bg-indigo-700 text-yellow-300 font-semibold shadow-lg hover:bg-indigo-900 hover:text-yellow-100 border border-indigo-900 transition scale-105'
+                : 'px-4 py-2 rounded-lg bg-yellow-300 text-indigo-900 font-semibold shadow-lg hover:bg-yellow-400 hover:text-black border border-yellow-400 transition scale-105'
+            }
+            style={{ minWidth: 220, fontSize: 18, letterSpacing: 1 }}
             onClick={markTodayDone}
             disabled={isSolvedDate(new Date())}
-            style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}
           >
-            <span className="text-center font-medium text-indigo-100 w-full block">
+            <span className={theme === 'dark' ? 'text-indigo-100' : 'text-black'}>
               {isSolvedDate(new Date()) ? 'Already Marked Today' : 'Mark Practice Done Today'}
             </span>
           </button>
         </div>
       </div>
-      {/* Calendar Component in Card */}
+
+      {/* Calendar Component */}
       <div className="flex justify-center flex-1 px-2 w-full">
         <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-2 sm:p-6 md:p-10 w-full max-w-xs sm:max-w-xl border border-indigo-900/40">
           <Calendar
             tileClassName={({ date }) => {
-              return isSolvedDate(date) ? 'highlight' : null;
+              return isSolvedDate(date)
+                ? 'highlight'
+                : theme === 'dark'
+                  ? 'text-black font-semibold'
+                  : 'text-indigo-900 font-semibold';
             }}
             className="w-full"
           />
         </div>
       </div>
-      {/* Floating Streak Card at Bottom Right */}
+
+      {/* Floating Streak Card */}
       <div className="fixed bottom-10 right-8 z-50 bg-indigo-900/90 border border-indigo-700 shadow-2xl rounded-2xl flex items-center gap-2 px-6 py-3 text-yellow-300 font-bold text-lg backdrop-blur-lg">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap text-yellow-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span>Streak: {calendarStreak}</span>

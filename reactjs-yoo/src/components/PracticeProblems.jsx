@@ -188,7 +188,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
   return (
     <div className={
       theme === 'dark'
-        ? 'min-h-screen flex flex-col transition-colors duration-300 bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 text-indigo-100'
+        ? 'min-h-screen flex flex-col transition-colors duration-300 bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 text-grey-100'
         : 'min-h-screen flex flex-col transition-colors duration-300 bg-gradient-to-br from-white via-blue-100 to-yellow-100 text-indigo-900'
     }>
       <ContestsNavbar 
@@ -213,12 +213,21 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
           ? 'practice-box bg-gray-900/60 text-yellow-100 max-w-5xl mx-auto rounded-2xl shadow-2xl p-6 mt-20 border border-indigo-900/40'
           : 'practice-box bg-white text-indigo-900 max-w-5xl mx-auto rounded-2xl shadow-2xl p-6 mt-20 border border-indigo-900/40'
       }>
-        <h2 className="text-3xl font-bold text-indigo-900 mb-6 text-center">Practice Problems</h2>
+        <h2 className={
+          theme === 'dark'
+            ? 'text-3xl font-bold text-yellow-100 mb-6 text-center'
+            : 'text-3xl font-bold text-indigo-900 mb-6 text-center'
+        }>Practice Problems</h2>
         <div className="flex flex-wrap gap-4 justify-center mb-6">
           {platforms.map(p => (
             <button
               key={p.key}
-              className={`px-5 py-2 rounded-xl font-semibold border transition shadow-sm ${platform === p.key ? 'bg-indigo-700 text-yellow-300 border-indigo-900' : 'bg-white/10 text-indigo-200 border-indigo-700 hover:bg-indigo-900/40'}`}
+              className={
+                theme === 'dark'
+                  ? `px-5 py-2 rounded-xl font-semibold border transition shadow-sm ${platform === p.key ? 'bg-indigo-700 text-yellow-300 border-yellow-400 scale-105 shadow-lg' : 'bg-gray-800 text-indigo-200 border-indigo-700 hover:bg-indigo-900/40 hover:text-yellow-200'}`
+                  : `px-5 py-2 rounded-xl font-semibold border transition shadow-sm ${platform === p.key ? 'bg-yellow-300 text-indigo-900 border-yellow-400 scale-105 shadow-lg' : 'bg-white text-black border-indigo-300 hover:bg-yellow-100 hover:text-indigo-900'}`
+              }
+              style={{ minWidth: 120, minHeight: 44, letterSpacing: 1, fontSize: 18 }}
               onClick={() => setPlatform(p.key)}
             >
               {p.name}
@@ -239,7 +248,12 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
               }
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded-lg bg-indigo-700 text-yellow-300 font-semibold text-sm shadow hover:bg-indigo-900 border border-indigo-900 transition"
+              className={
+                theme === 'dark'
+                  ? 'px-4 py-2 rounded-lg bg-indigo-700 text-yellow-300 font-semibold text-base shadow-lg hover:bg-indigo-900 hover:text-yellow-100 border border-indigo-900 transition'
+                  : 'px-4 py-2 rounded-lg bg-yellow-300 text-indigo-900 font-semibold text-base shadow-lg hover:bg-yellow-400 hover:text-black border border-yellow-400 transition'
+              }
+              style={{ minWidth: 200, fontSize: 17, letterSpacing: 1 }}
               title={`Go to ${platforms.find(p => p.key === platform)?.name || ''} practice problems page`}
             >
               Go to {platforms.find(p => p.key === platform)?.name} Problems
@@ -255,7 +269,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
               onChange={e => setSearch(e.target.value)}
             />
             <select
-              className="border border-indigo-700 bg-gray-900/60 text-indigo-900 rounded-lg px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="border border-indigo-700 bg-gray-900/60 text-black-900 rounded-lg px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-indigo-900"
               value={tag}
               onChange={e => setTag(e.target.value)}
             >
@@ -264,7 +278,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
             </select>
           </div>
         )}
-        {loading && <div className="text-center text-indigo-200 font-semibold">Loading problems...</div>}
+        {loading && <div className="text-center text-indigo-900 font-semibold">Loading problems...</div>}
         {error && <div className="text-center text-red-400 font-semibold">{error}</div>}
 
         <ul className="divide-y divide-indigo-900/30 mt-4">
@@ -310,17 +324,25 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
                     : `https://leetcode.com/problems/${p.titleSlug}/`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-indigo-100 hover:underline"
+                  className={
+                    theme === 'dark'
+                      ? 'font-semibold text-yellow-200 hover:text-pink-300 hover:underline'
+                      : `font-semibold ${platform === 'leetcode' ? 'text-orange-600' : platform === 'codechef' ? 'text-red-700' : platform === 'gfg' ? 'text-green-700' : platform === 'atcoder' ? 'text-blue-800' : platform === 'hackerrank' ? 'text-green-800' : 'text-indigo-800'} hover:text-black hover:underline`
+                  }
                 >
                   {platform === 'codeforces'
                     ? `[${p.contestId}${p.index}] ${p.name}`
                     : `[${p.questionId}] ${p.title}`}
                 </a>
-                <div className="text-sm text-indigo-300">
-                  {platform === 'codeforces' && p.rating && <span>Difficulty: {p.rating} | </span>}
-                  {platform === 'leetcode' && p.difficulty && <span>Difficulty: {p.difficulty} | </span>}
-                  {platform === 'codeforces' && p.tags && <span>Tags: {p.tags.join(', ')}</span>}
-                  {platform === 'leetcode' && p.topicTags && <span>Tags: {p.topicTags.join(', ')}</span>}
+                <div className={
+                  theme === 'dark'
+                    ? 'text-sm text-indigo-200'
+                    : 'text-sm text-black'
+                }>
+                  {platform === 'codeforces' && p.rating && <span className={theme === 'dark' ? 'text-pink-200' : 'text-pink-700'}>Difficulty: {p.rating} | </span>}
+                  {platform === 'leetcode' && p.difficulty && <span className={theme === 'dark' ? 'text-pink-200' : 'text-pink-700'}>Difficulty: {p.difficulty} | </span>}
+                  {platform === 'codeforces' && p.tags && <span className={theme === 'dark' ? 'text-green-200' : 'text-green-700'}>Tags: {p.tags.join(', ')}</span>}
+                  {platform === 'leetcode' && p.topicTags && <span className={theme === 'dark' ? 'text-green-200' : 'text-green-700'}>Tags: {p.topicTags.join(', ')}</span>}
                 </div>
               </li>
             );

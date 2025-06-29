@@ -60,8 +60,8 @@ export default function FavouritesPage({ userId, goToHome }) {
       />
       <div className={
         theme === 'dark'
-          ? 'bg-white/10 backdrop-blur-lg shadow-2xl rounded-3xl border border-indigo-900/40 p-6 w-full max-w-md flex flex-col items-center relative overflow-visible text-indigo-100'
-          : 'bg-white/80 backdrop-blur-lg shadow-2xl rounded-3xl border border-indigo-300/40 p-6 w-full max-w-md flex flex-col items-center relative overflow-visible text-indigo-900'
+          ? 'bg-gray-900/80 text-cyan-200 max-w-3xl mx-auto rounded-2xl shadow-2xl p-6 mt-20 border border-indigo-900/60'
+          : 'bg-white text-blue-900 max-w-3xl mx-auto rounded-2xl shadow-2xl p-6 mt-20 border border-indigo-300/40'
       }>
         <h1 className={
           'text-4xl font-serif font-bold mb-8 ' +
@@ -87,7 +87,16 @@ export default function FavouritesPage({ userId, goToHome }) {
                     const key = p.problem?.id || p.problem?._id || i;
                     return (
                       <li key={key} className="py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                        <a href={p.problem?.link || p.problem?.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-indigo-800 hover:underline">
+                        <a
+                          href={p.problem?.link || p.problem?.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={
+                            theme === 'dark'
+                              ? 'font-semibold text-yellow-200 hover:text-pink-300 hover:underline'
+                              : 'font-semibold text-blue-900 hover:text-pink-700 hover:underline'
+                          }
+                        >
                           {p.problem?.title || p.problem?.name || 'Untitled'}
                         </a>
                         {p.problem?.platform && <span className="text-sm text-indigo-600">({p.problem.platform})</span>}
@@ -134,7 +143,16 @@ export default function FavouritesPage({ userId, goToHome }) {
 
                     return (
                       <li key={key} className="py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                        <a href={contestObj.link || contestObj.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-indigo-800 hover:underline">
+                        <a
+                          href={contestObj.link || contestObj.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={
+                            theme === 'dark'
+                              ? 'font-semibold text-yellow-200 hover:text-pink-300 hover:underline'
+                              : 'font-semibold text-blue-900 hover:text-pink-700 hover:underline'
+                          }
+                        >
                           {contestObj.title || contestObj.name || contestObj.event || 'Untitled'}
                         </a>
                         {contestObj.platform && <span className="text-sm text-indigo-600">({contestObj.platform})</span>}

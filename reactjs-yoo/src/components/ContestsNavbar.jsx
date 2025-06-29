@@ -91,7 +91,7 @@ function ContestsNavbar({ goToHome, goToCalendar, onSignOut, streak, username, t
         </div>
       ) : (
         <div className="flex items-center gap-6">
-          <ul className="flex justify-end items-center gap-2">
+          <ul className="flex justify-end items-center gap-1">
             <li className={getMenuItemClass()} onClick={() => window.setPage && window.setPage('contests')}>Compete</li>
             <li className={getMenuItemClass()} onClick={() => window.setPage && window.setPage('practice')}>Practice</li>
             <li className={getMenuItemClass()} onClick={() => window.setPage && window.setPage('favourites')}>Favourites</li>
