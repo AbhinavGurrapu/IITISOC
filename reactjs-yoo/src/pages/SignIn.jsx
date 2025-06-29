@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
   const [username, setUsername] = useState('');
@@ -6,15 +7,40 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
   const [showUsernameError, setShowUsernameError] = useState(false);
   const [showPasswordError, setShowPasswordError] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [loginError, setLoginError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let usernameMissing = !username.trim();
     let passwordMissing = !password;
     setShowUsernameError(usernameMissing);
     setShowPasswordError(passwordMissing);
+    setLoginError('');
     if (usernameMissing || passwordMissing) return;
-    onLogin(username.trim());
+    try {
+      let res;
+      if (username.includes('@')) {
+        // Login with email
+        res = await axios.post('http://localhost:3001/api/login', { email: username.trim() });
+      } else {
+        // Try to get user by username, then login with their email
+        const userRes = await axios.get(`http://localhost:3001/api/users`);
+        const foundUser = Array.isArray(userRes.data)
+          ? userRes.data.find(u => u.name === username.trim())
+          : null;
+        if (!foundUser || !foundUser.email) throw new Error('No account found');
+        res = await axios.post('http://localhost:3001/api/login', { email: foundUser.email });
+      }
+      if (res.data && res.data.user) {
+        onLogin(res.data.user.name, res.data.user.email);
+      } else {
+        setLoginError('No account found for this user. Please create an account.');
+      }
+    } catch (err) {
+      setLoginError(
+        err.response?.data?.error || 'No account found for this user. Please create an account.'
+      );
+    }
   };
 
   return (
@@ -83,6 +109,9 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
               </span>
             )}
           </div>
+          {loginError && (
+            <span className="text-red-500 text-xs mt-1 ml-1 text-center">{loginError}</span>
+          )}
           <button
             type="submit"
             className="bg-gradient-to-r from-indigo-500 via-sky-500 to-pink-400 hover:from-pink-500 hover:to-yellow-400 text-white font-semibold rounded-lg mt-2 px-4 py-2 w-full shadow-md transition-all duration-200 hover:scale-105 disabled:opacity-60"

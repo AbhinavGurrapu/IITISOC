@@ -102,7 +102,7 @@ app.post('/api/login', async (req, res) => {
         // For demo, just find by email; add password check if you add password field
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ error: 'Invalid credentials' });
+            return res.status(400).json({ error: 'No account found for this email. Please create an account before logging in.' });
         }
         res.json({ message: 'Login successful', user });
     } catch (err) {
