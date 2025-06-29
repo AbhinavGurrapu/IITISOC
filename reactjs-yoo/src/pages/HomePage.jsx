@@ -103,22 +103,39 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
     const today = new Date().toISOString().split('T')[0];
     const savedDates = JSON.parse(localStorage.getItem('solvedDates')) || [];
     setSolvedToday(savedDates.includes(today));
+    // Streak logic: check if yesterday was solved, else reset
+    if (savedDates.length > 0) {
+      const sorted = savedDates.slice().sort();
+      const lastDate = sorted[sorted.length - 1];
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      if (lastDate !== yesterday && lastDate !== today) {
+        setStreak(0);
+        localStorage.setItem('streak', 0);
+      }
+    }
   }, []);
 
   const markSolved = () => {
     if (solvedToday) return;
-    const newStreak = streak + 1;
-    setStreak(newStreak);
-    localStorage.setItem('streak', newStreak);
-
     const today = new Date().toISOString().split('T')[0];
     const savedDates = JSON.parse(localStorage.getItem('solvedDates')) || [];
+    let newStreak = 1;
+    if (savedDates.length > 0) {
+      const sorted = savedDates.slice().sort();
+      const lastDate = sorted[sorted.length - 1];
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      if (lastDate === yesterday) {
+        newStreak = Number(localStorage.getItem('streak') || 0) + 1;
+      }
+    }
+    setStreak(newStreak);
+    localStorage.setItem('streak', newStreak);
     if (!savedDates.includes(today)) {
       savedDates.push(today);
       localStorage.setItem('solvedDates', JSON.stringify(savedDates));
       setSolvedToday(true);
     }
-    alert('Problem marked as solved! Streak increased!');
+    alert('Problem marked as solved!');
   };
 
   const handleSignOut = () => {
