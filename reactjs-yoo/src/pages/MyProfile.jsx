@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function MyProfile({ username, goToHome, personalInfo = {}, onEditInfo }) {
   const [editMode, setEditMode] = useState(false);
@@ -11,6 +11,20 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
     password: personalInfo.password || '',
   });
   const fullName = [form.firstName, form.lastName].filter(Boolean).join(' ');
+
+  // Use name and email from personalInfo if available
+  const displayName = personalInfo.name || [form.firstName, form.lastName].filter(Boolean).join(' ');
+  const displayEmail = personalInfo.email || '-';
+
+  useEffect(() => {
+    setForm({
+      firstName: personalInfo.firstName || '',
+      lastName: personalInfo.lastName || '',
+      age: personalInfo.age || '',
+      college: personalInfo.college || '',
+      password: personalInfo.password || '',
+    });
+  }, [personalInfo]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -81,7 +95,11 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                 <div className="flex flex-col items-start">
                   <div className="text-base font-bold text-indigo-700 mb-1">Name</div>
-                  <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-full shadow-md tracking-wide">{fullName || '-'}</div>
+                  <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-full shadow-md tracking-wide">{displayName || '-'}</div>
+                </div>
+                <div className="flex flex-col items-start">
+                  <div className="text-base font-bold text-indigo-700 mb-1">Email</div>
+                  <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-full shadow-md tracking-wide">{displayEmail}</div>
                 </div>
                 <div className="flex flex-col items-start">
                   <div className="text-base font-bold text-indigo-700 mb-1">Age</div>

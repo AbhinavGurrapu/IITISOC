@@ -43,4 +43,18 @@ router.post('/:id/favorite-problems', async (req, res) => {
     }
 });
 
+// Get user by email
+router.get('/email/:email', async (req, res) => {
+    try {
+        console.log('Fetching user with email:', req.params.email); // Debug log
+        const user = await User.findOne({ email: req.params.email })
+            .populate('favoriteContests')
+            .populate('favoriteProblems');
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;

@@ -14,6 +14,7 @@ import Footer from './components/Footer';
 import ContestsNavbar from './components/ContestsNavbar';
 import MyProfile from './pages/MyProfile'; // Import MyProfile component
 import FavouritesPage from './pages/FavouritesPage'; // Import FavouritesPage component
+import axios from 'axios';
 
 function App() {
   const [page, setPage] = useState(() => {
@@ -29,11 +30,17 @@ function App() {
     return saved ? JSON.parse(saved) : null;
   });
   const [signupFlow, setSignupFlow] = useState(false); // Track if user is in signup flow
+  const [userEmail, setUserEmail] = useState(() => {
+    return localStorage.getItem('userEmail') || '';
+  });
+  const [userDetails, setUserDetails] = useState(null);
   const isFirstRender = useRef(true);
 
-  const handleLogin = (name) => {
+  const handleLogin = (name, email) => {
     setUsername(name);
+    setUserEmail(email);
     localStorage.setItem('username', name); // Save username to localStorage
+    localStorage.setItem('userEmail', email);
     setSignupFlow(false); // Not in signup flow, so skip PersonalInfo
     setPage('home');
   };
@@ -91,6 +98,27 @@ function App() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
+  // Fetch user details from backend when profile page is loaded
+  useEffect(() => {
+    if (page === 'profile' && userEmail) {
+      axios.get(`http://localhost:3001/api/user/email/${userEmail}`)
+        .then(res => setUserDetails(res.data))
+        .catch(() => setUserDetails(null));
+    }
+  }, [page, userEmail]);
+
+  // On mount, check for OAuth redirect params and auto-login
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get('email');
+    const name = params.get('name');
+    if (email && name) {
+      handleLogin(name, email);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
   // Make setPage globally accessible for legacy code
   if (typeof window !== 'undefined') {
     window.setPage = setPage;
@@ -142,9 +170,9 @@ function App() {
         <MyProfile
           username={username}
           goToHome={() => setPage('home')}
-          personalInfo={personalInfo || {}}
+          personalInfo={userDetails || {}}
           onEditInfo={(info) => {
-            setPersonalInfo(info);
+            setUserDetails(info);
             localStorage.setItem('personalInfo', JSON.stringify(info));
           }}
         />

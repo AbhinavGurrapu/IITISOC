@@ -60,7 +60,10 @@ app.get('/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/' }),
     (req, res) => {
         // Successful login
-        res.redirect('http://localhost:5173'); // Change to your frontend home page URL if different
+        // Redirect to frontend with user info as query params
+        const user = req.user;
+        const frontendUrl = `http://localhost:5173/?email=${encodeURIComponent(user.email)}&name=${encodeURIComponent(user.name)}`;
+        res.redirect(frontendUrl);
     }
 );
 
@@ -174,10 +177,12 @@ app.get('/auth/github', passport.authenticate('github', { scope: [ 'user:email' 
 
 app.get('/auth/github/callback', 
   passport.authenticate('github', { failureRedirect: 'http://localhost:3000/signin' }),
-  function(req, res) {
-    const name = req.user.displayName || req.user.username;
-    // Redirect to frontend with name as query param
-    res.redirect(`http://localhost:5173/?name=${encodeURIComponent(name)}`);
+  async function(req, res) {
+    // Fetch the user from DB to get the exact email stored
+    const user = await User.findOne({ githubId: req.user.githubId });
+    const name = user.name || user.username;
+    const email = user.email || '';
+    res.redirect(`http://localhost:5173/?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}`);
   }
 );
 
