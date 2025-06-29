@@ -5,6 +5,7 @@ const router = express.Router();
 const FavoriteContest = require('../models/FavoriteContest');
 const FavoriteProblem = require('../models/FavoriteProblem');
 const User = require('../models/User');
+const mongoose = require('mongoose');
 
 // POST /api/favorites/contest
 router.post('/contest', async (req, res) => {
@@ -20,8 +21,18 @@ router.post('/contest', async (req, res) => {
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
+    // Fix: Only use _id if userId is a valid ObjectId
+    let userQuery;
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      userQuery = { _id: userId };
+    } else if (userId.includes('@')) {
+      userQuery = { email: userId };
+    } else {
+      userQuery = { name: userId };
+    }
+
     await User.updateOne(
-      { $or: [{ _id: userId }, { name: userId }] },
+      userQuery,
       { $addToSet: { favoriteContests: updated._id } }
     );
 
@@ -56,6 +67,42 @@ router.delete('/problem', async (req, res) => {
   }
 });
 
+// DELETE /api/favorites/contest
+router.delete('/contest', async (req, res) => {
+  try {
+    const { userId, contest } = req.body;
+    if (!userId || !contest || !contest.id) {
+      return res.status(400).json({ error: 'userId and contest.id are required' });
+    }
+    const removed = await FavoriteContest.findOneAndDelete({
+      userId,
+      'contest.id': contest.id
+    });
+    if (!removed) {
+      return res.status(404).json({ error: 'Favorite contest not found' });
+    }
+
+    // Optionally, remove from user's favoriteContests array
+    let userQuery;
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      userQuery = { _id: userId };
+    } else if (userId.includes('@')) {
+      userQuery = { email: userId };
+    } else {
+      userQuery = { name: userId };
+    }
+    await User.updateOne(
+      userQuery,
+      { $pull: { favoriteContests: removed._id } }
+    );
+
+    // Return immediately after successful deletion
+    return res.json({ message: 'Contest removed from favorites' });
+  } catch (err) {
+    console.error('Error in DELETE /contest:', err);
+    res.status(500).json({ error: 'Internal server error', details: err.message });
+  }
+});
 
 // GET /api/favorites/contest?userId=...
 router.get('/contest', async (req, res) => {

@@ -11,8 +11,16 @@ const getUpcomingContests = async () => {
     Authorization: `ApiKey ${username}:${apiKey}`
   };
 
-  const response = await axios.get(url, { headers });
-  return response.data;
+  try {
+    const response = await axios.get(url, { headers });
+    return response.data;
+  } catch (err) {
+    if (err.response && err.response.status === 429) {
+      // Optionally, serve cached data here
+      return { error: 'Rate limit exceeded. Please try again later.' };
+    }
+    throw err;
+  }
 };
 
 module.exports = { getUpcomingContests };
