@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Card from 'react-bootstrap/Card';
+import ContestsNavbar from '../components/ContestsNavbar';
 
 const DAILY_PROBLEM_APIS = [
   // LeetCode Daily Challenge
@@ -190,80 +191,14 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
-      {/* Go Back Button */}
-      <button
-        className="absolute top-8 left-8 bg-white/40 hover:bg-white/70 text-indigo-700 rounded-full p-2 shadow-lg z-50 transition"
-        onClick={goToFirstPage}
-        aria-label="Go Back"
-        style={{backdropFilter: 'blur(6px)'}}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-      </button>
-      {/* Floating Navbar with notification bell */}
-      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-700 h-16 flex justify-between px-2 shadow-xl rounded-2xl items-center border border-indigo-200">
-        <p className="text-4xl font-serif font-semibold text-white cursor-pointer" onClick={goToHome}>
-          CodeBlitz
-        </p>
-        <div className="flex items-center gap-6">
-          <ul className="flex justify-end items-center gap-2">
-            <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('contests')}>
-              Compete
-            </li>
-            <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('practice')}>
-              Practice
-            </li>
-            <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={goToCalendar}>
-              My Calendar
-            </li>
-            {/* Profile dropdown here (rightmost) */}
-            <div className="relative flex items-center ml-4" ref={dropdownRef}>
-              {/* Notification Bell - smaller and left of profile */}
-              <div className="relative flex items-center">
-                <button
-                  className="focus:outline-none mr-2"
-                  onClick={() => setDropdownOpen((open) => !open)}
-                  aria-label="Notifications"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white drop-shadow-lg">
-                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                  </svg>
-                </button>
-              </div>
-              <button
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-800 text-white rounded-xl shadow transition focus:outline-none ml-2"
-                onClick={() => setDropdownOpen((open) => !open)}
-                type="button"
-              >
-                <i className="fa-solid fa-user"></i>
-                <span className="hidden sm:inline">{username || 'Profile'}</span>
-                <i className="fa-solid fa-chevron-down text-xs"></i>
-              </button>
-              {dropdownOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border border-indigo-200 z-50 animate-fade-in"
-                  style={{
-                    top: '100%',
-                    left: 'auto',
-                    right: 0,
-                    minWidth: '11rem',
-                    maxHeight: '60vh',
-                    overflowY: 'auto',
-                  }}
-                >
-                  <ul className="py-2 text-gray-800">
-                    <li className="px-4 py-2 hover:bg-indigo-100 cursor-pointer" onClick={goToProfile}>My Profile</li>
-                    <li className="px-4 py-2 hover:bg-red-100 text-red-600 cursor-pointer" onClick={onSignOut}>
-                      Sign Out
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          </ul>
-        </div>
-      </div>
-
+      {/* Shared ContestsNavbar with notification bell */}
+      <ContestsNavbar
+        goToHome={goToHome}
+        goToCalendar={goToCalendar}
+        onSignOut={onSignOut}
+        streak={streak}
+        username={username}
+      />
       {/* Add padding to prevent content from being hidden behind navbar */}
       <div className="pt-28 pb-4 flex flex-col items-center">
         <h1 className="font-mono font-extrabold text-3xl md:text-4xl text-indigo-800 drop-shadow text-center">
