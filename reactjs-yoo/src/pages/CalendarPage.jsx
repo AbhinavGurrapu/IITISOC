@@ -24,13 +24,13 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem(getSolvedDatesKey()) || '[]');
     setSolvedDates(saved);
-    // Streak logic: check if yesterday was solved, else reset
+    // Streak logic: only reset if both yesterday and today are not solved
     if (saved.length > 0) {
       const sorted = saved.slice().sort();
       const lastDate = sorted[sorted.length - 1];
       const today = new Date().toLocaleDateString('en-CA');
       const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-CA');
-      if (lastDate !== yesterday && lastDate !== today) {
+      if (lastDate !== yesterday && lastDate !== today && !saved.includes(today)) {
         setCalendarStreak(0);
         localStorage.setItem(getStreakKey(), 0);
       } else {

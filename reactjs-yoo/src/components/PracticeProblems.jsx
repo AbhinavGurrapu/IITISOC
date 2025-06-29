@@ -48,14 +48,6 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
     setSolvedDates(savedDates);
   }, [username, userId]);
 
-  // Save streak and solvedDates when they change
-  useEffect(() => {
-    localStorage.setItem(getStreakKey(), streak);
-  }, [streak, username, userId]);
-  useEffect(() => {
-    localStorage.setItem(getSolvedDatesKey(), JSON.stringify(solvedDates));
-  }, [solvedDates, username, userId]);
-
   // Helper to get unique key and id for a problem
   const getProblemKey = (p) => {
     if ((p.platform || platform) === 'codeforces') {
@@ -144,17 +136,31 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
   const favoriteProblem = async (problem) => {
     const key = getProblemKey({ ...problem, platform });
     const id = getProblemId({ ...problem, platform });
+    let link = '';
+    if ((problem.platform || platform) === 'codeforces') {
+      link = `https://codeforces.com/problemset/problem/${problem.contestId}/${problem.index}`;
+    } else if ((problem.platform || platform) === 'leetcode') {
+      link = `https://leetcode.com/problems/${problem.titleSlug}/`;
+    } else if ((problem.platform || platform) === 'gfg') {
+      link = problem.url || '';
+    } else if ((problem.platform || platform) === 'codechef') {
+      link = problem.url || '';
+    } else if ((problem.platform || platform) === 'atcoder') {
+      link = problem.url || '';
+    } else if ((problem.platform || platform) === 'hackerrank') {
+      link = problem.url || '';
+    }
     if (debounceRef.current[key]) return; // Prevent rapid double clicks
     debounceRef.current[key] = true;
     setFavLoading(key);
     try {
       const res = await axios.post('http://localhost:3001/api/favorites/problem', {
         userId: userId || 'demo',
-        problem: { ...problem, platform, id },
+        problem: { ...problem, platform, id, link },
       });
       setFavoriteProblems(prev => [...prev, key]);
       // Add to favoriteProblemObjs for immediate UI update
-      setFavoriteProblemObjs(prev => [...prev, res.data || { problem: { ...problem, platform, id } }]);
+      setFavoriteProblemObjs(prev => [...prev, res.data || { problem: { ...problem, platform, id, link } }]);
     } catch (err) {
       showToast('Failed to favorite problem', 'error');
     }
@@ -196,13 +202,11 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
         goToHome={goToHome} 
         goToCalendar={goToCalendar} 
         onSignOut={() => {
-          // Clear all user data and redirect to first page
+          // Only clear user info, do NOT remove streak or solvedDates
           localStorage.removeItem('personalInfo');
           localStorage.removeItem('username');
           localStorage.removeItem('userEmail');
           localStorage.removeItem('currentPage');
-          localStorage.removeItem(getStreakKey());
-          localStorage.removeItem(getSolvedDatesKey());
           if (onSignOut) onSignOut();
           if (window.setPage) window.setPage('first');
         }}
