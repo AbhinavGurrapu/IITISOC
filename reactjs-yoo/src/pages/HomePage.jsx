@@ -210,7 +210,7 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
   }, [dropdownOpen]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 flex flex-col">
       {/* Shared ContestsNavbar with notification bell */}
       <ContestsNavbar
         goToHome={goToHome}
@@ -221,10 +221,10 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
       />
       {/* Add padding to prevent content from being hidden behind navbar */}
       <div className="pt-28 pb-4 flex flex-col items-center">
-        <h1 className="font-mono font-extrabold text-3xl md:text-4xl text-indigo-800 drop-shadow text-center">
+        <h1 className="font-mono font-extrabold text-3xl md:text-4xl text-indigo-100 drop-shadow text-center">
           Welcome {username}! Looking For Contests?
         </h1>
-        <p className="text-lg text-indigo-700/80 font-medium max-w-xl text-center mt-2">
+        <p className="text-lg text-indigo-300 font-medium max-w-xl text-center mt-2">
           Explore upcoming contests, track your streak, and solve a daily problem to keep your skills sharp!
         </p>
       </div>
@@ -234,12 +234,12 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
         <div className="w-full">
           <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full max-w-5xl mx-auto">
             {contests.map((c) => (
-              <div key={c.name} className="shadow-xl rounded-3xl bg-white/80 backdrop-blur-md border border-indigo-100 text-center p-6 flex flex-col items-center transition-transform hover:scale-105 hover:shadow-2xl">
-                <h1 className="font-serif font-extrabold text-xl text-indigo-700 mb-2">{c.name}</h1>
+              <div key={c.name} className="shadow-2xl rounded-3xl bg-white/10 backdrop-blur-lg border border-indigo-900/40 text-center p-6 flex flex-col items-center transition-transform hover:scale-105 hover:shadow-indigo-700/40 hover:bg-white/20">
+                <h1 className="font-serif font-extrabold text-xl text-indigo-100 mb-2 drop-shadow-lg">{c.name}</h1>
                 <img className={`h-20 w-auto object-contain mb-2`} src={c.img} alt={c.name} />
-                <p className="text-indigo-800/90 mb-2">{c.desc}</p>
+                <p className="text-indigo-200 mb-2">{c.desc}</p>
                 <a
-                  className="font-sans font-semibold rounded-xl underline bg-indigo-100 px-3 py-1 text-indigo-700 hover:bg-indigo-200 transition"
+                  className="font-sans font-semibold rounded-xl underline bg-indigo-900/40 px-3 py-1 text-indigo-100 hover:bg-indigo-800/80 hover:text-yellow-300 transition shadow"
                   href={c.link}
                   target="_blank"
                   rel="noreferrer"
@@ -254,20 +254,20 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
         {/* Daily Problem Card - below all contest cards */}
         {dailyProblem && (
           <div className="w-full flex justify-center mt-8">
-            <div className="rounded-3xl shadow-2xl bg-white/90 border border-indigo-100 p-8 flex flex-col items-center max-w-md w-full">
-              <div className="text-2xl font-extrabold text-indigo-800 mb-2">Daily Problem</div>
-              <div className="text-indigo-800 font-semibold text-center mb-1 text-lg">{dailyProblem.title}</div>
-              <div className="text-indigo-600 text-base mb-2">Platform: {dailyProblem.platform}{dailyProblem.difficulty ? ` (${dailyProblem.difficulty})` : ''}</div>
+            <div className="rounded-3xl shadow-2xl bg-white/10 backdrop-blur-lg border border-indigo-900/40 p-8 flex flex-col items-center max-w-md w-full">
+              <div className="text-2xl font-extrabold text-indigo-100 mb-2 drop-shadow">Daily Problem</div>
+              <div className="text-indigo-100 font-semibold text-center mb-1 text-lg">{dailyProblem.title}</div>
+              <div className="text-indigo-300 text-base mb-2">Platform: {dailyProblem.platform}{dailyProblem.difficulty ? ` (${dailyProblem.difficulty})` : ''}</div>
               <a
                 href={dailyProblem.link}
                 target="_blank"
                 rel="noreferrer"
-                className="bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-6 py-2 rounded-xl shadow mb-2 transition text-lg"
+                className="bg-indigo-700 hover:bg-indigo-800 text-yellow-300 font-bold px-6 py-2 rounded-xl shadow mb-2 transition text-lg"
               >
                 Solve Now
               </a>
               <button
-                className={`text-base px-5 py-2 rounded-xl font-semibold transition ${solvedToday ? 'bg-gray-400 text-white cursor-not-allowed' : 'bg-green-500 text-white hover:bg-green-600'}`}
+                className={`text-base px-5 py-2 rounded-xl font-semibold transition ${solvedToday ? 'bg-gray-700 text-gray-300 cursor-not-allowed' : 'bg-green-600 text-white hover:bg-green-700'}`}
                 onClick={markSolved}
                 disabled={solvedToday}
               >
@@ -279,7 +279,7 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
       </main>
 
       {/* Floating Streak Card at Bottom Right */}
-      <div className="fixed bottom-10 right-8 z-50 bg-indigo-700 border border-indigo-300 shadow-2xl rounded-2xl flex items-center gap-2 px-6 py-3 text-white font-bold text-lg backdrop-blur-lg">
+      <div className="fixed bottom-10 right-8 z-50 bg-indigo-900/90 border border-indigo-700 shadow-2xl rounded-2xl flex items-center gap-2 px-6 py-3 text-yellow-300 font-bold text-lg backdrop-blur-lg">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap text-yellow-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span>Streak: {streak}</span>
       </div>

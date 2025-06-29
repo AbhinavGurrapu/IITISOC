@@ -68,7 +68,8 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 pb-10 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 pb-10 flex flex-col">
+      <div className='mt-4'></div>
       {/* Only one navbar below, removed any duplicate */}
       <ContestsNavbar 
         goToHome={goToHome} 
@@ -77,21 +78,20 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
         streak={streak} 
         username={username} 
       />
-      
       {/* Title & Subtitle */}
       <div className="flex flex-col items-center mt-4 sm:mt-2 mb-10 sm:mb-4 px-2 w-full">
         <div className="mt-16"></div>
         <CalendarIcon />   
-        <h1 className="text-center font-mono font-extrabold text-2xl sm:text-3xl md:text-4xl py-2 text-indigo-800 drop-shadow">Your Practice Calendar</h1>
-        <p className="text-center text-base sm:text-lg text-indigo-700/80 font-medium max-w-xs sm:max-w-xl">Track your daily progress and stay motivated! Days you solved a problem are highlighted in green.</p>
+        <h1 className="text-center font-mono font-extrabold text-2xl sm:text-3xl md:text-4xl py-2 text-indigo-100 drop-shadow">Your Practice Calendar</h1>
+        <p className="text-center text-base sm:text-lg text-indigo-300 font-medium max-w-xs sm:max-w-xl">Track your daily progress and stay motivated! Days you solved a problem are highlighted in green.</p>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2 sm:mt-4 w-full max-w-xs sm:max-w-none justify-center items-center">
           <button
-            className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-xl font-bold text-white shadow transition ${isSolvedDate(new Date()) ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}`}
+            className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-xl font-bold text-white shadow transition ${isSolvedDate(new Date()) ? 'bg-gray-700 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
             onClick={markTodayDone}
             disabled={isSolvedDate(new Date())}
             style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}
           >
-            <span className="text-center font-medium text-indigo-700 w-full block">
+            <span className="text-center font-medium text-indigo-100 w-full block">
               {isSolvedDate(new Date()) ? 'Already Marked Today' : 'Mark Practice Done Today'}
             </span>
           </button>
@@ -99,7 +99,7 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
       </div>
       {/* Calendar Component in Card */}
       <div className="flex justify-center flex-1 px-2 w-full">
-        <div className="bg-white/90 rounded-3xl shadow-2xl p-2 sm:p-6 md:p-10 w-full max-w-xs sm:max-w-xl border border-indigo-100">
+        <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-2 sm:p-6 md:p-10 w-full max-w-xs sm:max-w-xl border border-indigo-900/40">
           <Calendar
             tileClassName={({ date }) => {
               return isSolvedDate(date) ? 'highlight' : null;
@@ -109,7 +109,7 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
         </div>
       </div>
       {/* Floating Streak Card at Bottom Right */}
-      <div className="fixed bottom-10 right-8 z-50 bg-indigo-700 border border-indigo-300 shadow-2xl rounded-2xl flex items-center gap-2 px-6 py-3 text-white font-bold text-lg backdrop-blur-lg">
+      <div className="fixed bottom-10 right-8 z-50 bg-indigo-900/90 border border-indigo-700 shadow-2xl rounded-2xl flex items-center gap-2 px-6 py-3 text-yellow-300 font-bold text-lg backdrop-blur-lg">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap text-yellow-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span>Streak: {calendarStreak}</span>
       </div>

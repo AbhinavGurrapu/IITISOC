@@ -183,7 +183,7 @@ function App() {
       )}
       {page === 'calendar' && (
         <div className="top-0 bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
-          <div className="pt-4">
+          <div className="pt-0">
             <CalendarPage 
               goToHome={() => setPage('home')} 
               goToFirstPage={() => setPage('home')} 
@@ -203,7 +203,7 @@ function App() {
       )}
       {page === 'contests' && (
         <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
-          <div className="pt-4">
+          <div className="pt-0">
             
             <ContestListByDay 
               userId={username || 'demo'}

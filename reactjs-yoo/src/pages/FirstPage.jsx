@@ -27,7 +27,7 @@ export default function FirstPage({ goToSignIn, goToSignUp, goToHome }) {
   const navItems = ['Compete', 'Practice', 'Contests', 'Login'];
 
   return (
-    <div className="min-h-screen flex flex-col relative">
+    <div className="min-h-screen flex flex-col relative bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800">
       {/* Background Image */}
       <div
         className="absolute inset-0 z-0"
@@ -36,16 +36,16 @@ export default function FirstPage({ goToSignIn, goToSignUp, goToHome }) {
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          opacity: 0.7,
+          opacity: 0.3,
         }}
       ></div>
 
       {/* Navigation */}
       <div className="relative z-10 flex flex-col min-h-screen">
-        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-700 h-20 flex justify-between items-center shadow-2xl rounded-2xl px-6 md:px-8 border border-indigo-200">
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-900/90 h-20 flex justify-between items-center shadow-2xl rounded-2xl px-6 md:px-8 border border-indigo-700">
           <p
-            className="text-3xl md:text-4xl font-serif font-extrabold text-white cursor-pointer drop-shadow-lg"
-            onClick={goToHome}
+            className="text-3xl md:text-4xl font-serif font-extrabold text-yellow-300 cursor-pointer drop-shadow-lg"
+           
           >
             CodeBlitz
           </p>
@@ -55,7 +55,7 @@ export default function FirstPage({ goToSignIn, goToSignUp, goToHome }) {
             {navItems.map((label) => (
               <li
                 key={label}
-                className="cursor-pointer px-4 py-2 text-white hover:bg-indigo-600/80 rounded-xl font-semibold text-lg transition shadow-sm"
+                className="cursor-pointer px-4 py-2 text-yellow-100 hover:bg-indigo-800/80 rounded-xl font-semibold text-lg transition shadow-sm"
                 onClick={goToSignIn}
               >
                 {label}
@@ -64,7 +64,7 @@ export default function FirstPage({ goToSignIn, goToSignUp, goToHome }) {
           </ul>
 
           {/* Hamburger - Mobile */}
-          <div className="md:hidden text-white" onClick={() => setMenuOpen(!menuOpen)}>
+          <div className="md:hidden text-yellow-100" onClick={() => setMenuOpen(!menuOpen)}>
             {menuOpen ? (
               <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -79,11 +79,11 @@ export default function FirstPage({ goToSignIn, goToSignUp, goToHome }) {
 
         {/* Mobile Dropdown */}
         {menuOpen && (
-          <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[90%] bg-white/90 text-indigo-800 rounded-2xl shadow-xl z-40 md:hidden flex flex-col px-6 py-4 gap-2 border border-indigo-300">
+          <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[90%] bg-indigo-900/90 text-yellow-100 rounded-2xl shadow-xl z-40 md:hidden flex flex-col px-6 py-4 gap-2 border border-indigo-700">
             {navItems.map((label) => (
               <button
                 key={label}
-                className="text-left px-3 py-2 rounded-lg hover:bg-indigo-100 text-lg font-semibold"
+                className="text-left px-3 py-2 rounded-lg hover:bg-indigo-800 text-lg font-semibold"
                 onClick={() => {
                   setMenuOpen(false);
                   goToSignIn();
@@ -97,15 +97,15 @@ export default function FirstPage({ goToSignIn, goToSignUp, goToHome }) {
 
         {/* Main Hero Content */}
         <main className="flex flex-1 items-center justify-center pt-32 pb-10">
-          <div className="flex flex-col justify-center items-start max-w-xl bg-white/30 backdrop-blur-lg rounded-3xl p-10 shadow-2xl border border-white/30 mt-10 md:mt-0">
-            <p className="text-4xl md:text-5xl font-extrabold text-indigo-900 mb-8 drop-shadow-lg leading-tight">
+          <div className="flex flex-col justify-center items-start max-w-xl bg-white/10 backdrop-blur-lg rounded-3xl p-10 shadow-2xl border border-indigo-900/40 mt-10 md:mt-0">
+            <p className="text-4xl md:text-5xl font-extrabold text-yellow-100 mb-8 drop-shadow-lg leading-tight">
               Know All About The Contests
             </p>
-            <p className="text-xl text-indigo-800/90 mb-10 font-medium">
+            <p className="text-xl text-indigo-200 mb-10 font-medium">
               Gives info about the contests on various sites such as Codeforces, AtCoder, LeetCode, CodeChef, and GeeksForGeeks
             </p>
             <button
-              className="flex items-center gap-3 bg-white/60 backdrop-blur-md text-indigo-900 font-bold py-4 px-8 rounded-2xl shadow-lg text-xl transition-all duration-200 border-2 border-white/30 hover:bg-white/80 hover:text-blue-600 hover:scale-105"
+              className="flex items-center gap-3 bg-indigo-900/80 backdrop-blur-md text-yellow-300 font-bold py-4 px-8 rounded-2xl shadow-lg text-xl transition-all duration-200 border-2 border-indigo-700 hover:bg-indigo-800 hover:text-yellow-400 hover:scale-105"
               onClick={goToSignUp}
             >
               <UserPlusIcon />

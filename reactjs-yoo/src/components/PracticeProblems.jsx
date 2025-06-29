@@ -191,7 +191,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 pb-10 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 pb-10 flex flex-col">
       <ContestsNavbar 
         goToHome={goToHome} 
         goToCalendar={goToCalendar} 
@@ -210,13 +210,13 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
         username={username} 
       />
       <div className="mb-10"></div>
-      <div className="max-w-5xl mx-auto bg-white/80 rounded-2xl shadow-xl p-6 mt-20">
-        <h2 className="text-3xl font-bold text-indigo-800 mb-6 text-center">Practice Problems</h2>
+      <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-6 mt-20 border border-indigo-900/40">
+        <h2 className="text-3xl font-bold text-indigo-100 mb-6 text-center">Practice Problems</h2>
         <div className="flex flex-wrap gap-4 justify-center mb-6">
           {platforms.map(p => (
             <button
               key={p.key}
-              className={`px-5 py-2 rounded-xl font-semibold border transition shadow-sm ${platform === p.key ? 'bg-indigo-600 text-white border-indigo-700' : 'bg-white text-indigo-700 border-indigo-300 hover:bg-indigo-100'}`}
+              className={`px-5 py-2 rounded-xl font-semibold border transition shadow-sm ${platform === p.key ? 'bg-indigo-700 text-yellow-300 border-indigo-900' : 'bg-white/10 text-indigo-200 border-indigo-700 hover:bg-indigo-900/40'}`}
               onClick={() => setPlatform(p.key)}
             >
               {p.name}
@@ -237,7 +237,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
               }
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 rounded-lg bg-indigo-500 text-white font-semibold text-sm shadow hover:bg-indigo-700 border border-indigo-700 transition"
+              className="px-4 py-2 rounded-lg bg-indigo-700 text-yellow-300 font-semibold text-sm shadow hover:bg-indigo-900 border border-indigo-900 transition"
               title={`Go to ${platforms.find(p => p.key === platform)?.name || ''} practice problems page`}
             >
               Go to {platforms.find(p => p.key === platform)?.name} Problems
@@ -247,13 +247,13 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
         {(platform === 'codeforces' ) && (
           <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-center">
             <input
-              className="border border-indigo-300 rounded-lg px-4 py-2 w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="border border-indigo-700 bg-gray-900/60 text-indigo-100 rounded-lg px-4 py-2 w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               placeholder="Search by name or ID"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
             <select
-              className="border border-indigo-300 rounded-lg px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="border border-indigo-700 bg-gray-900/60 text-indigo-100 rounded-lg px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               value={tag}
               onChange={e => setTag(e.target.value)}
             >
@@ -262,10 +262,10 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
             </select>
           </div>
         )}
-        {loading && <div className="text-center text-indigo-700 font-semibold">Loading problems...</div>}
-        {error && <div className="text-center text-red-600 font-semibold">{error}</div>}
+        {loading && <div className="text-center text-indigo-200 font-semibold">Loading problems...</div>}
+        {error && <div className="text-center text-red-400 font-semibold">{error}</div>}
 
-        <ul className="divide-y divide-indigo-100 mt-4">
+        <ul className="divide-y divide-indigo-900/30 mt-4">
           {filtered.slice(0, 50).map(p => {
             const key = getProblemKey({ ...p, platform });
             const isFavorite = favoriteProblems.includes(key);
@@ -274,7 +274,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
                 <button
                   className={`text-2xl transition transform hover:scale-110 ${favLoading === key ? 'animate-ping' : ''}`}
                   style={{
-                    color: isFavorite ? 'red' : 'black',
+                    color: isFavorite ? 'red' : 'white',
                     background: 'none',
                     border: 'none',
                     outline: 'none',
@@ -308,13 +308,13 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
                     : `https://leetcode.com/problems/${p.titleSlug}/`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-semibold text-indigo-800 hover:underline"
+                  className="font-semibold text-indigo-100 hover:underline"
                 >
                   {platform === 'codeforces'
                     ? `[${p.contestId}${p.index}] ${p.name}`
                     : `[${p.questionId}] ${p.title}`}
                 </a>
-                <div className="text-sm text-indigo-700/80">
+                <div className="text-sm text-indigo-300">
                   {platform === 'codeforces' && p.rating && <span>Difficulty: {p.rating} | </span>}
                   {platform === 'leetcode' && p.difficulty && <span>Difficulty: {p.difficulty} | </span>}
                   {platform === 'codeforces' && p.tags && <span>Tags: {p.tags.join(', ')}</span>}
