@@ -51,15 +51,15 @@ export default function FavouritesPage({ userId, goToHome }) {
                 <ul className="divide-y divide-indigo-100">
                   {practiceProblems.map((p, i) => (
                     <li key={i} className="py-3 flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
-                      <a href={p.link || p.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-indigo-800 hover:underline">
-                        {p.title || p.name}
+                      <a href={p.problem?.link || p.problem?.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-indigo-800 hover:underline">
+                        {p.problem?.title || p.problem?.name || 'Untitled'}
                       </a>
-                      {p.platform && <span className="text-sm text-indigo-600">({p.platform})</span>}
+                      {p.problem?.platform && <span className="text-sm text-indigo-600">({p.problem.platform})</span>}
                       <button
                         className="ml-2 px-2 py-1 text-xs bg-red-100 hover:bg-red-300 text-red-700 rounded"
                         onClick={async () => {
                           try {
-                            await axios.delete(`http://localhost:3001/api/favorites/problem`, { data: { userId, problem: p } });
+                            await axios.delete(`http://localhost:3001/api/favorites/problem`, { data: { userId, problem: p.problem } });
                             setPracticeProblems(practiceProblems.filter((_, idx) => idx !== i));
                           } catch (e) {
                             alert('Failed to remove favorite');

@@ -193,10 +193,12 @@ function App() {
       )}
       {page === 'practice' && (
         <PracticeProblems
+          userId={username || 'demo'}
+          username={username}
           goToHome={goToHome}
           goToFirstPage={goToFirstPage}
           goToCalendar={goToCalendar}
-          // ...other props, e.g. userId...
+          // ...other props
         />
       )}
       {page === 'favourites' && (
