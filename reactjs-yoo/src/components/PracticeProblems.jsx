@@ -263,13 +263,13 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
         {(platform === 'codeforces' ) && (
           <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-center">
             <input
-              className="border border-indigo-700 bg-gray-900/60 text-indigo-900 rounded-lg px-4 py-2 w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="border border-indigo-700 bg-gray-200/100 text-indigo-900 rounded-lg px-4 py-2 w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-indigo-900"
               placeholder="Search by name or ID"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
             <select
-              className="border border-indigo-700 bg-gray-900/60 text-black-900 rounded-lg px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-indigo-900"
+              className="border border-indigo-700 bg-gray-200/100 text-indigo-900 rounded-lg px-4 py-2 w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-indigo-900"
               value={tag}
               onChange={e => setTag(e.target.value)}
             >

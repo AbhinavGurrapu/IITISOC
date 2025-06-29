@@ -100,7 +100,9 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
                   setUsername(e.target.value);
                   setShowUsernameError(false);
                 }}
-                className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition"
+                className={
+                  `border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition text-black`
+                }
               />
               {showUsernameError && (
                 <span className="text-red-500 text-xs mt-1 ml-1">
@@ -117,7 +119,9 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
                   setEmail(e.target.value);
                   setShowEmailError(false);
                 }}
-                className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition"
+                className={
+                  `border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition text-black`
+                }
               />
               {showEmailError && (
                 <span className="text-red-500 text-xs mt-1 ml-1">
@@ -136,7 +140,9 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
                   setShowMismatchError(false);
                   setShowPassLengthError(false);
                 }}
-                className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition pr-10"
+                className={
+                  `border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition pr-10 text-black`
+                }
               />
               <span
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-indigo-500"
@@ -195,7 +201,9 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
                   setShowConfirmPassError(false);
                   setShowMismatchError(false);
                 }}
-                className="border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition pr-10"
+                className={
+                  `border-2 border-indigo-400 bg-white/70 focus:bg-white focus:border-indigo-600 rounded-lg px-4 py-2 w-full text-lg shadow-sm focus:outline-none transition pr-10 text-black`
+                }
               />
               <span
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-indigo-600 hover:text-indigo-800 transition-colors duration-200"
