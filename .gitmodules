@@ -1,0 +1,3 @@
+[submodule "IITISOC"]
+	path = IITISOC
+	url = https://github.com/AbhinavGurrapu/IITISOC.git
