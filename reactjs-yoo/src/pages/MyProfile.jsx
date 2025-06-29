@@ -150,7 +150,11 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
                 </div>
                 <div className="flex flex-col items-start">
                   <div className="text-sm font-bold text-indigo-200 mb-1">Email</div>
+<<<<<<< HEAD
                   <div className="text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1 w-fit  shadow-md tracking-wide">{displayEmail}</div>
+=======
+                  <div className="text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1  w-fit shadow-md tracking-wide">{displayEmail}</div>
+>>>>>>> 7229398d119405bf722fb0963152658ea6faf8d6
                 </div>
                 <div className="flex flex-col items-start md:col-span-2">
                   <div className="text-sm font-bold text-indigo-200 mb-1">College/Institute</div>

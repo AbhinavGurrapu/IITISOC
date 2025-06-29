@@ -18,7 +18,7 @@ const platforms = [
 const CLIST_USERNAME = 'Parthu';
 const CLIST_API_KEY = '0b2000fe1d0c548f5343e6720c8f92a0648f6377';
 
-function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _streak, username }) {
+function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username }) {
   const [platform, setPlatform] = useState('codeforces');
   const [problems, setProblems] = useState([]);
   const [contests, setContests] = useState([]);
@@ -32,6 +32,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
   const [toast, setToast] = useState(null); // For showing error/success messages
   const debounceRef = useRef({}); // To debounce rapid clicks
 
+<<<<<<< HEAD
   // User-specific streak and solvedDates
   const [streak, setStreak] = useState(0);
   const [solvedDates, setSolvedDates] = useState([]);
@@ -48,6 +49,8 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
     setSolvedDates(savedDates);
   }, [username, userId]);
 
+=======
+>>>>>>> 7229398d119405bf722fb0963152658ea6faf8d6
   // Helper to get unique key and id for a problem
   const getProblemKey = (p) => {
     if ((p.platform || platform) === 'codeforces') {
@@ -189,8 +192,6 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
       // Always update UI state, even on error, to avoid stuck red heart
       setFavoriteProblems(prev => prev.filter(k => k !== key));
       setFavoriteProblemObjs(prev => prev.filter(fav => getProblemKey(fav.problem || fav) !== key));
-      // Only show error if not 404
-      
     }
     setFavLoading(null);
     setTimeout(() => { debounceRef.current[key] = false; }, 500);
@@ -210,7 +211,6 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _
           if (onSignOut) onSignOut();
           if (window.setPage) window.setPage('first');
         }}
-        streak={streak} 
         username={username} 
       />
       <div className="mb-10"></div>
