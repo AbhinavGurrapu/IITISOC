@@ -14,16 +14,46 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
 
   // Use name and email from personalInfo if available
   const displayName = personalInfo.name || [form.firstName, form.lastName].filter(Boolean).join(' ');
-  const displayEmail = personalInfo.email || '-';
+  let displayEmail = personalInfo.email || '';
+  if (!displayEmail && typeof window !== 'undefined') {
+    displayEmail = localStorage.getItem('userEmail') || '';
+  }
+  if (!displayEmail && username && username.includes('@')) {
+    displayEmail = username;
+  }
+  displayEmail = displayEmail || '-';
 
+  // Load profile info from localStorage if available, and merge with personalInfo
   useEffect(() => {
-    setForm({
-      firstName: personalInfo.firstName || '',
-      lastName: personalInfo.lastName || '',
-      age: personalInfo.age || '',
-      college: personalInfo.college || '',
-      password: personalInfo.password || '',
-    });
+    const savedProfile = localStorage.getItem('myProfileInfo');
+    if (savedProfile) {
+      try {
+        const parsed = JSON.parse(savedProfile);
+        setForm({
+          firstName: parsed.firstName || personalInfo.firstName || '',
+          lastName: parsed.lastName || personalInfo.lastName || '',
+          age: parsed.age || personalInfo.age || '',
+          college: parsed.college || personalInfo.college || '',
+          password: parsed.password || personalInfo.password || '',
+        });
+      } catch {
+        setForm({
+          firstName: personalInfo.firstName || '',
+          lastName: personalInfo.lastName || '',
+          age: personalInfo.age || '',
+          college: personalInfo.college || '',
+          password: personalInfo.password || '',
+        });
+      }
+    } else {
+      setForm({
+        firstName: personalInfo.firstName || '',
+        lastName: personalInfo.lastName || '',
+        age: personalInfo.age || '',
+        college: personalInfo.college || '',
+        password: personalInfo.password || '',
+      });
+    }
   }, [personalInfo]);
 
   const handleChange = (e) => {
@@ -32,8 +62,25 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
 
   const handleSave = () => {
     if (onEditInfo) onEditInfo(form);
+    localStorage.setItem('myProfileInfo', JSON.stringify(form));
     setEditMode(false);
   };
+
+  // For display, prefer localStorage profile if available
+  const savedProfile = typeof window !== 'undefined' ? localStorage.getItem('myProfileInfo') : null;
+  let displayFirstName = form.firstName;
+  let displayLastName = form.lastName;
+  let displayAge = form.age;
+  let displayCollege = form.college;
+  if (savedProfile) {
+    try {
+      const parsed = JSON.parse(savedProfile);
+      displayFirstName = parsed.firstName || displayFirstName;
+      displayLastName = parsed.lastName || displayLastName;
+      displayAge = parsed.age || displayAge;
+      displayCollege = parsed.college || displayCollege;
+    } catch {}
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col items-center justify-center">
@@ -103,7 +150,7 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
                 </div>
                 <div className="flex flex-col items-start">
                   <div className="text-base font-bold text-indigo-700 mb-1">Age</div>
-                  <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-full shadow-md tracking-wide">{form.age || '-'}</div>
+                  <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-full shadow-md tracking-wide">{displayAge || '-'}</div>
                 </div>
                 <div className="flex flex-col items-start md:col-span-2">
                   <div className="text-base font-bold text-indigo-700 mb-1">Password</div>
@@ -125,7 +172,7 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
                 </div>
                 <div className="flex flex-col items-start md:col-span-2">
                   <div className="text-base font-bold text-indigo-700 mb-1">College/Institute</div>
-                  <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-full shadow-md tracking-wide">{form.college || '-'}</div>
+                  <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-full shadow-md tracking-wide">{displayCollege || '-'}</div>
                 </div>
               </div>
             </div>
