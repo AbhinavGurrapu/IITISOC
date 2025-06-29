@@ -140,16 +140,27 @@ passport.use(new GitHubStrategy({
   },
   async function(accessToken, refreshToken, profile, done) {
     try {
-      // Find or create user in MongoDB
       const existingUser = await User.findOne({ githubId: profile.id });
       if (existingUser) {
         return done(null, existingUser);
       }
+      // Fallback for missing email
+      let email = '';
+      if (profile.emails && profile.emails.length > 0 && profile.emails[0].value) {
+        email = profile.emails[0].value;
+      } else if (profile.username) {
+        email = `${profile.username}@github.com`;
+      } else {
+        email = `unknown_${profile.id}@github.com`;
+      }
       const newUser = new User({
         name: profile.displayName || profile.username,
-        email: (profile.emails && profile.emails[0] && profile.emails[0].value) || '',
+        email: email,
         githubId: profile.id,
-        profilePicture: profile.photos && profile.photos[0] && profile.photos[0].value
+        profilePicture: profile.photos && profile.photos[0] && profile.photos[0].value,
+        bio: profile._json && profile._json.bio,
+        location: profile._json && profile._json.location,
+        blog: profile._json && profile._json.blog
       });
       await newUser.save();
       return done(null, newUser);
