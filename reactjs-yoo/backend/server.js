@@ -4,6 +4,8 @@ const contestRoutes = require('./routes/contests');
 const favoritesRoutes = require('./routes/favorites');
 const favoritesProblemsRoutes = require('./routes/favoritesProblems');
 const userRoutes = require('./routes/user');
+const leetcodeRoutes = require('./routes/leetcode');
+const gfgRoutes = require('./routes/gfg');
 const cors = require('cors');
 const connectDB = require('./db');
 const User = require('./models/User');
@@ -71,6 +73,8 @@ app.use('/api/contests', contestRoutes);
 app.use('/api/favorites', favoritesRoutes);
 app.use('/api/favorites', favoritesProblemsRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/leetcode', leetcodeRoutes);
+app.use('/api/gfg', gfgRoutes);
 
 // Manual signup route
 app.post('/api/signup', async (req, res) => {

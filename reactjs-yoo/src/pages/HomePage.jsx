@@ -28,8 +28,8 @@ const DAILY_PROBLEM_APIS = [
   {
     name: 'GeeksforGeeks',
     fetcher: async () => {
-      // GFG POTD unofficial API (community-maintained)
-      const res = await fetch('https://gfg-problem-of-the-day-api.vercel.app/api/potd');
+      // Use backend proxy to avoid CORS
+      const res = await fetch('http://localhost:3001/api/gfg/potd');
       const data = await res.json();
       if (data && data.problem) {
         return {
@@ -70,17 +70,20 @@ const DAILY_PROBLEM_APIS = [
   },
 ];
 
-export default function HomePage({ username, onSignOut, goToCalendar, goToHome, goToFirstPage, goToPractice, goToProfile }) {
+export default function HomePage({ username, userId, userEmail, onSignOut, goToCalendar, goToHome, goToFirstPage, goToPractice, goToProfile }) {
   const [dailyProblem, setDailyProblem] = useState(null);
   const [streak, setStreak] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [solvedToday, setSolvedToday] = useState(false);
   const dropdownRef = useRef(null);
 
-  const getStreakKey = () => `streak_${username || 'demo'}`;
-  const getSolvedDatesKey = () => `solvedDates_${username || 'demo'}`;
+  // Use a stable key: prefer userId, then userEmail, then username, then demo
+  const getStreakKey = () => `streak_${userId || userEmail || username || 'demo'}`;
+  const getSolvedDatesKey = () => `solvedDates_${userId || userEmail || username || 'demo'}`;
 
   useEffect(() => {
+    // Only run if userId/userEmail/username is available
+    if (!userId && !userEmail && !username) return;
     const savedStreak = localStorage.getItem(getStreakKey()) || 0;
     setStreak(Number(savedStreak));
     // Fetch daily problem from random platform (LeetCode, GFG, CodeChef, HackerRank)
@@ -116,7 +119,7 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
         localStorage.setItem(getStreakKey(), 0);
       }
     }
-  }, [username]);
+  }, [userId, userEmail, username]);
 
   const markSolved = () => {
     if (solvedToday) return;
@@ -142,8 +145,9 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem(getStreakKey());
-    localStorage.removeItem(getSolvedDatesKey());
+    // Only remove user-identifying info, NOT streak or solvedDates
+    // localStorage.removeItem(getStreakKey());
+    // localStorage.removeItem(getSolvedDatesKey());
     onSignOut();
   };
 

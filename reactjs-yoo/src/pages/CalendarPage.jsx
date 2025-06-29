@@ -22,24 +22,49 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
   const getSolvedDatesKey = () => `solvedDates_${username || 'demo'}`;
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem(getSolvedDatesKey()) || '[]');
-    setSolvedDates(saved);
-    // Streak logic: check if yesterday was solved, else reset
-    if (saved.length > 0) {
-      const sorted = saved.slice().sort();
-      const lastDate = sorted[sorted.length - 1];
-      const today = new Date().toLocaleDateString('en-CA');
-      const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-CA');
-      if (lastDate !== yesterday && lastDate !== today) {
+    const loadState = () => {
+      const saved = JSON.parse(localStorage.getItem(getSolvedDatesKey()) || '[]');
+      setSolvedDates(saved);
+      // Streak logic: check if yesterday was solved, else reset
+      if (saved.length > 0) {
+        const sorted = saved.slice().sort();
+        const lastDate = sorted[sorted.length - 1];
+        const today = new Date().toLocaleDateString('en-CA');
+        const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-CA');
+        if (lastDate !== yesterday && lastDate !== today) {
+          setCalendarStreak(0);
+          localStorage.setItem(getStreakKey(), 0);
+        } else {
+          setCalendarStreak(Number(localStorage.getItem(getStreakKey()) || 0));
+        }
+      } else {
         setCalendarStreak(0);
         localStorage.setItem(getStreakKey(), 0);
-      } else {
-        setCalendarStreak(Number(localStorage.getItem(getStreakKey()) || 0));
       }
-    } else {
-      setCalendarStreak(0);
-      localStorage.setItem(getStreakKey(), 0);
-    }
+    };
+    loadState();
+    // Listen for localStorage changes (from PracticeProblems or other tabs)
+    const handleStorage = (e) => {
+      if (
+        e.key === getStreakKey() ||
+        e.key === getSolvedDatesKey() ||
+        e.key === null // null means clear() was called
+      ) {
+        loadState();
+      }
+    };
+    // Listen for visibility change (when returning to this tab/page)
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        loadState();
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, [username]);
 
   const isSolvedDate = (date) => {
