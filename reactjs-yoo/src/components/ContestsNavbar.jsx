@@ -6,7 +6,7 @@ function ContestsNavbar({ goToHome, goToCalendar, onSignOut, streak, username })
   const [notifications, setNotifications] = useState([]);
   const [hasUnread, setHasUnread] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1000 : false);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1250 : false);
   const dropdownRef = useRef(null);
   const mobileMenuRef = useRef(null);
 
@@ -37,7 +37,7 @@ function ContestsNavbar({ goToHome, goToCalendar, onSignOut, streak, username })
 
   useEffect(() => {
     function handleResize() {
-      setIsMobile(window.innerWidth < 1000);
+      setIsMobile(window.innerWidth < 1250);
     }
     window.addEventListener('resize', handleResize);
     handleResize();
@@ -69,7 +69,7 @@ function ContestsNavbar({ goToHome, goToCalendar, onSignOut, streak, username })
       <p className="ml-4 text-2xl sm:text-4xl font-serif font-semibold text-white cursor-pointer" onClick={goToHome}>
         CodeBlitz
       </p>
-      {/* Hamburger for mobile (if width < 1000px) */}
+      {/* Hamburger for mobile (if width < 1300px) */}
       {isMobile ? (
         <div className="flex items-center gap-2">
           <button
