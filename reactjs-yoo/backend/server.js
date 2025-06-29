@@ -130,4 +130,44 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
+// Github authentication
+const GitHubStrategy = require('passport-github2').Strategy;
+
+passport.use(new GitHubStrategy({
+    clientID: 'Ov23liVXndKnnuHMKnjU',
+    clientSecret: 'c6d7fc4f42754428a27e499a723c678696674708',
+    callbackURL: 'http://localhost:3001/auth/github/callback'
+  },
+  async function(accessToken, refreshToken, profile, done) {
+    try {
+      // Find or create user in MongoDB
+      const existingUser = await User.findOne({ githubId: profile.id });
+      if (existingUser) {
+        return done(null, existingUser);
+      }
+      const newUser = new User({
+        name: profile.displayName || profile.username,
+        email: (profile.emails && profile.emails[0] && profile.emails[0].value) || '',
+        githubId: profile.id,
+        profilePicture: profile.photos && profile.photos[0] && profile.photos[0].value
+      });
+      await newUser.save();
+      return done(null, newUser);
+    } catch (err) {
+      return done(err, null);
+    }
+  }
+));
+
+app.get('/auth/github', passport.authenticate('github', { scope: [ 'user:email' ] }));
+
+app.get('/auth/github/callback', 
+  passport.authenticate('github', { failureRedirect: 'http://localhost:3000/signin' }),
+  function(req, res) {
+    const name = req.user.displayName || req.user.username;
+    // Redirect to frontend with name as query param
+    res.redirect(`http://localhost:5173/?name=${encodeURIComponent(name)}`);
+  }
+);
+
 app.listen(3001, () => console.log('Backend running on http://localhost:3001'));

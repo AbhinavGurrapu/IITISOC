@@ -90,7 +90,11 @@ export default function SignIn({ onLogin, goToSignUp, goToFirstPage }) {
             onClick={() => window.location.href = 'http://localhost:3001/auth/google'}
             title="Sign in with Google"
           ></i>
-          <i className="fab fa-github text-2xl text-white/80 hover:text-white cursor-pointer transition"></i>
+          <i
+            className="fab fa-github text-2xl text-white/80 hover:text-white cursor-pointer transition"
+            onClick={() => window.location.href = 'http://localhost:3001/auth/github'}
+            title="Sign in with GitHub"
+          ></i>
           <i className="fab fa-facebook text-2xl text-white/80 hover:text-white cursor-pointer transition"></i>
         </div>
         <p className="text-white/80 mt-2 text-sm">
