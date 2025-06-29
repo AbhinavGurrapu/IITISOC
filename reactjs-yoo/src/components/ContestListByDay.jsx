@@ -153,23 +153,27 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
                       >
                         {favLoading === c.id ? '❤️‍🔥' : '❤️'}
                       </button>
-                      <button
-                        style={{ color: 'gray', fontSize: '1.5em' }}
-                        onClick={() => removeFavoriteContest(c)}
-                        disabled={favLoading === ('remove-' + c.id)}
-                        title="Remove from favorites"
-                        className="ml-2 hover:scale-125 transition-transform"
-                      >
-                        🗑️
-                      </button>
                     </div>
                     <div className="font-serif font-extrabold text-2xl text-indigo-900 mb-2 leading-tight line-clamp-2">{c.event}</div>
                     <div className="text-indigo-600 text-base mb-1 font-medium">Host: {c.host}</div>
                     <div className="text-indigo-700 text-base mb-2 font-semibold">Starts at: {formatDateDDMMYYYY(c.start)} <span className='ml-2'>{new Date(c.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span></div>
                     <div className="flex gap-3 mt-auto w-full">
-                      <a href={c.href} target="_blank" rel="noopener noreferrer" className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold px-5 py-2 rounded-xl shadow transition text-base w-1/2 text-center">View</a>
-                      <a href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(c.event)}&dates=${formatDateTimeForCalendar(c.start, c.end)}&details=${encodeURIComponent(c.href)}`} target="_blank" rel="noopener noreferrer" className="bg-green-500 hover:bg-green-700 text-white font-bold px-5 py-2 rounded-xl shadow transition text-base w-1/2 text-center">Add to Google Calendar</a>
-                    </div>
+                      <a 
+                        href={c.href} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold px-4 py-1 rounded-xl shadow transition text-sm text-center flex items-center justify-center">
+                        View
+                      </a>
+
+                      <a 
+                        href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(c.event)}&dates=${formatDateTimeForCalendar(c.start, c.end)}&details=${encodeURIComponent(c.href)}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold px-4 py-1 rounded-xl shadow transition text-sm text-center flex items-center justify-center">
+                        Add to Google Calendar
+                      </a>
+                    </div>  
                   </div>
                 ))}
               </div>

@@ -15,13 +15,6 @@ const platforms = [
   { name: 'HackerRank', key: 'hackerrank' },
 ];
 
-const platformLinks = {
-  gfg: 'https://practice.geeksforgeeks.org/explore',
-  codechef: 'https://www.codechef.com/practice',
-  atcoder: 'https://atcoder.jp/contests/',
-  hackerrank: 'https://www.hackerrank.com/domains/tutorials/10-days-of-javascript',
-};
-
 const CLIST_USERNAME = 'Parthu';
 const CLIST_API_KEY = '0b2000fe1d0c548f5343e6720c8f92a0648f6377';
 
@@ -34,6 +27,50 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
   const [favLoading, setFavLoading] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [favoriteProblems, setFavoriteProblems] = useState([]);
+  const [favoriteProblemObjs, setFavoriteProblemObjs] = useState([]); // store full favorite objects from backend
+
+  // Helper to get unique key and id for a problem
+  const getProblemKey = (p) => {
+    if ((p.platform || platform) === 'codeforces') {
+      return `cf-${p.contestId}-${p.index}`;
+    } else if ((p.platform || platform) === 'leetcode') {
+      return `lc-${p.questionId}-${p.titleSlug}`;
+    } else {
+      return `${p.platform || platform}-${p.title || p.name || p.id}`;
+    }
+  };
+  const getProblemId = (p) => {
+    if ((p.platform || platform) === 'codeforces') {
+      return `cf-${p.contestId}-${p.index}`;
+    } else if ((p.platform || platform) === 'leetcode') {
+      return `lc-${p.questionId}-${p.titleSlug || ''}`;
+    } else {
+      return `${p.platform || platform}-${p.title || p.name || p.id}`;
+    }
+  };
+
+  useEffect(() => {
+    async function fetchFavorites() {
+      if (!userId) return;
+      try {
+        const res = await axios.get('http://localhost:3001/api/favorites/problem', {
+          params: { userId: userId || 'demo' }
+        });
+        if (Array.isArray(res.data)) {
+          setFavoriteProblemObjs(res.data); // store full objects
+          setFavoriteProblems(res.data.map(fav => getProblemKey(fav.problem || fav)));
+        } else {
+          setFavoriteProblems([]);
+          setFavoriteProblemObjs([]);
+        }
+      } catch (e) {
+        setFavoriteProblems([]);
+        setFavoriteProblemObjs([]);
+      }
+    }
+    fetchFavorites();
+  }, [userId, platform]);
 
   useEffect(() => {
     async function fetchProblemsOrContests() {
@@ -43,7 +80,6 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
       setContests([]);
       try {
         if (platform === 'clist') {
-          // Fetch contests from clist.by
           const res = await axios.get(
             `https://clist.by/api/v3/contest/?username=${CLIST_USERNAME}&api_key=${CLIST_API_KEY}&resource=codeforces.com,leetcode.com,atcoder.jp,codechef.com,geeksforgeeks.org,hackerrank.com&order_by=-start`
           );
@@ -52,23 +88,13 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
           const res = await axios.get('https://codeforces.com/api/problemset.problems');
           setProblems(res.data.result.problems);
         } else if (platform === 'leetcode') {
-          try {
-            const res = await axios.get('https://leetcode-api-faisalshohag.vercel.app/leetcode/problems');
-            if (res.data && Array.isArray(res.data.problems) && res.data.problems.length > 0) {
-              setProblems(res.data.problems);
-            } else {
-              setError('LeetCode problems are currently unavailable. Please try again later.');
-            }
-          } catch (err) {
-            setError('Failed to fetch LeetCode problems. The LeetCode API may be down.');
+          const res = await axios.get('https://leetcode-api-faisalshohag.vercel.app/leetcode/problems');
+          if (res.data && Array.isArray(res.data.problems)) {
+            setProblems(res.data.problems);
+          } else {
+            setError('LeetCode problems are currently unavailable.');
           }
-        } else if (platform === 'gfg') {
-          setProblems([]);
-        } else if (platform === 'codechef') {
-          setProblems([]);
-        } else if (platform === 'atcoder') {
-          setProblems([]);
-        } else if (platform === 'hackerrank') {
+        } else {
           setProblems([]);
         }
       } catch (e) {
@@ -91,13 +117,15 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
   });
 
   const favoriteProblem = async (problem) => {
-    setFavLoading(platform + '-' + (problem.contestId || problem.questionId || problem.title));
+    const key = getProblemKey({ ...problem, platform });
+    const id = getProblemId({ ...problem, platform });
+    setFavLoading(key);
     try {
       await axios.post('http://localhost:3001/api/favorites/problem', {
         userId: userId || 'demo',
-        problem: { ...problem, platform },
+        problem: { ...problem, platform, id },
       });
-      alert('Problem added to favorites!');
+      setFavoriteProblems(prev => [...prev, key]);
     } catch (err) {
       alert('Failed to favorite problem');
     }
@@ -105,10 +133,17 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
   };
 
   const removeFavoriteProblem = async (problem) => {
-    setFavLoading('remove-' + (problem.contestId || problem.questionId || problem.title));
+    const key = getProblemKey({ ...problem, platform });
+    // Find the favorite object for this problem
+    const favObj = favoriteProblemObjs.find(fav => getProblemKey(fav.problem || fav) === key);
+    const id = favObj ? favObj.problem?.id || favObj.id : getProblemId({ ...problem, platform });
+    setFavLoading(key);
     try {
-      await axios.delete('http://localhost:3001/api/favorites/problem', { data: { userId: userId || 'demo', problem: { ...problem, platform } } });
-      alert('Problem removed from favorites!');
+      await axios.delete('http://localhost:3001/api/favorites/problem', {
+        data: { userId: userId || 'demo', problem: { ...problem, platform, id } }
+      });
+      setFavoriteProblems(prev => prev.filter(k => k !== key));
+      setFavoriteProblemObjs(prev => prev.filter(fav => getProblemKey(fav.problem || fav) !== key));
     } catch (err) {
       alert('Failed to remove favorite');
     }
@@ -117,18 +152,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 pb-10 flex flex-col">
-      <div className="mt-4"></div>
-      <ContestsNavbar
-        goToHome={goToHome}
-        goToCalendar={goToCalendar}
-        onSignOut={() => {
-                setPage('first');
-                setPersonalInfo(null);
-                localStorage.removeItem('personalInfo');
-              }}
-        streak={streak}
-        username={username}
-      />
+      <ContestsNavbar goToHome={goToHome} goToCalendar={goToCalendar} onSignOut={onSignOut} streak={streak} username={username} />
       <div className="max-w-5xl mx-auto bg-white/80 rounded-2xl shadow-xl p-6 mt-20">
         <h2 className="text-3xl font-bold text-indigo-800 mb-6 text-center">Practice Problems</h2>
         <div className="flex flex-wrap gap-4 justify-center mb-6">
@@ -162,47 +186,56 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
         )}
         {loading && <div className="text-center text-indigo-700 font-semibold">Loading problems...</div>}
         {error && <div className="text-center text-red-600 font-semibold">{error}</div>}
-        {(platform === 'codeforces' || platform === 'leetcode') && (
-          <ul className="divide-y divide-indigo-100 mt-4">
-            {filtered.slice(0, 50).map(p => (
-              <li key={platform + '-' + (p.contestId || p.questionId || p.title)} className="py-4 flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+
+        <ul className="divide-y divide-indigo-100 mt-4">
+          {filtered.slice(0, 50).map(p => {
+            const key = getProblemKey({ ...p, platform });
+            const isFavorite = favoriteProblems.includes(key);
+            return (
+              <li key={key} className="py-4 flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
                 <button
-                  className="text-2xl mr-2 hover:scale-110 transition"
-                  style={{ color: 'red' }}
-                  onClick={() => favoriteProblem(p)}
-                  disabled={favLoading === (platform + '-' + (p.contestId || p.questionId || p.title))}
-                  title="Favorite this problem"
+                  className={`text-2xl transition transform hover:scale-110 ${favLoading === key ? 'animate-ping' : ''}`}
+                  style={{
+                    color: isFavorite ? 'red' : 'black',
+                    background: 'none',
+                    border: 'none',
+                    outline: 'none',
+                    padding: 0,
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => {
+                    if (isFavorite) {
+                      removeFavoriteProblem(p);
+                    } else {
+                      favoriteProblem(p);
+                    }
+                  }}
+                  disabled={favLoading === key}
+                  title={isFavorite ? 'Remove from favorites' : 'Favorite this problem'}
                 >
-                  {favLoading === (platform + '-' + (p.contestId || p.questionId || p.title)) ? '❤️‍🔥' : '❤️'}
+                  {isFavorite ? (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="red" stroke="red" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 21C12 21 4 13.36 4 8.5C4 5.42 6.42 3 9.5 3C11.24 3 12.91 3.81 14 5.08C15.09 3.81 16.76 3 18.5 3C21.58 3 24 5.42 24 8.5C24 13.36 16 21 16 21H12Z" />
+                    </svg>
+                  ) : (
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="white" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 21C12 21 4 13.36 4 8.5C4 5.42 6.42 3 9.5 3C11.24 3 12.91 3.81 14 5.08C15.09 3.81 16.76 3 18.5 3C21.58 3 24 5.42 24 8.5C24 13.36 16 21 16 21H12Z" />
+                    </svg>
+                  )}
                 </button>
-                <button
-                  className="text-2xl mr-2 hover:scale-110 transition"
-                  style={{ color: 'gray' }}
-                  onClick={() => removeFavoriteProblem(p)}
-                  disabled={favLoading === ('remove-' + (p.contestId || p.questionId || p.title))}
-                  title="Remove from favorites"
+
+                <a
+                  href={platform === 'codeforces'
+                    ? `https://codeforces.com/problemset/problem/${p.contestId}/${p.index}`
+                    : `https://leetcode.com/problems/${p.titleSlug}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-indigo-800 hover:underline"
                 >
-                  🗑️
-                </button>
-                {platform === 'codeforces' ? (
-                  <a
-                    href={`https://codeforces.com/problemset/problem/${p.contestId}/${p.index}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-indigo-800 hover:underline"
-                  >
-                    [{p.contestId}{p.index}] {p.name}
-                  </a>
-                ) : platform === 'leetcode' ? (
-                  <a
-                    href={`https://leetcode.com/problems/${p.titleSlug}/`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-indigo-800 hover:underline"
-                  >
-                    [{p.questionId}] {p.title}
-                  </a>
-                ) : null}
+                  {platform === 'codeforces'
+                    ? `[${p.contestId}${p.index}] ${p.name}`
+                    : `[${p.questionId}] ${p.title}`}
+                </a>
                 <div className="text-sm text-indigo-700/80">
                   {platform === 'codeforces' && p.rating && <span>Difficulty: {p.rating} | </span>}
                   {platform === 'leetcode' && p.difficulty && <span>Difficulty: {p.difficulty} | </span>}
@@ -210,49 +243,11 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
                   {platform === 'leetcode' && p.topicTags && <span>Tags: {p.topicTags.join(', ')}</span>}
                 </div>
               </li>
-            ))}
-          </ul>
-        )}
-        {(platform === 'gfg' || platform === 'codechef' || platform === 'atcoder' || platform === 'hackerrank') && !loading && !error && (
-          <div className="text-center text-indigo-700 mt-8">
-            <p className="mb-4">No public API for this platform. Please visit their practice page:</p>
-            <a
-              href={platformLinks[platform]}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-indigo-500 hover:bg-indigo-600 text-white font-bold px-6 py-2 rounded-xl shadow transition text-lg"
-            >
-              Go to {platforms.find(p => p.key === platform).name} Practice
-            </a>
-          </div>
-        )}
-        {filtered.length === 0 && (platform === 'codeforces' || platform === 'leetcode') && !loading && !error && (
-          <div className="text-center text-indigo-700 mt-8">No problems found for the selected filters.</div>
-        )}
-        {platform === 'clist' && (
-          <div className="mt-8">
-            <h3 className="text-2xl font-bold text-indigo-800 mb-4">Upcoming Contests</h3>
-            <ul className="divide-y divide-indigo-100">
-              {contests.map(contest => (
-                <li key={contest.id} className="py-4">
-                  <a
-                    href={contest.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-semibold text-indigo-800 hover:underline"
-                  >
-                    {contest.event} ({contest.resource.name})<br />
-                    <span className="text-sm text-indigo-700/80">
-                      Start: {contest.start} | Duration: {contest.duration}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+            );
+          })}
+        </ul>
       </div>
-      {/* Floating Streak Card at Bottom Right */}
+
       <div className="fixed bottom-10 right-8 z-50 bg-indigo-700 border border-indigo-300 shadow-2xl rounded-2xl flex items-center gap-2 px-6 py-3 text-white font-bold text-lg backdrop-blur-lg">
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap text-yellow-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         <span>Streak: {streak}</span>
