@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+require('dotenv').config({ path: __dirname + '/.env' });
 
-const MONGO_URI = 'mongodb://localhost:27017/codeblitz';
+const MONGO_URI = process.env.MONGODB_URI;
 
 function connectDB() {
   mongoose.connect(MONGO_URI, {
