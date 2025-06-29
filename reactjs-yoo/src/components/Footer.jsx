@@ -8,7 +8,6 @@ export default function Footer() {
         <li className="hover:underline">Contact Us</li>
         <li className="hover:underline">Privacy Policy</li>
         <li className="hover:underline">Terms</li>
-        <li className="hover:underline">Other Policy</li>
         <li className="hover:underline">About Us</li>
       </ul>
     </footer>
