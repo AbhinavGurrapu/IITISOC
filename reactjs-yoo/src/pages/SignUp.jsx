@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
@@ -15,6 +16,12 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [signupError, setSignupError] = useState("");
+
+  useEffect(() => {
+    document.body.classList.toggle("night-mode", theme === "dark");
+    document.body.classList.toggle("day-mode", theme === "light");
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,7 +69,12 @@ export default function SignUp({ onSignUp, goToSignIn, goToFirstPage }) {
 
   return (
     <div
-      className="min-h-screen flex flex-col justify-center items-center"
+      className={
+        `min-h-screen flex flex-col transition-colors duration-300 ` +
+        (theme === "dark"
+          ? "bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 text-indigo-100"
+          : "bg-gradient-to-br from-white via-blue-100 to-yellow-100 text-black")
+      }
       style={{
         backgroundImage: 'url("new.png")',
         backgroundSize: "cover",

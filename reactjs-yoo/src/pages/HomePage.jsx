@@ -113,14 +113,14 @@ export default function HomePage({ username, userId, userEmail, onSignOut, goToC
     }
     fetchRandomDailyProblem();
     // Check if solved today
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('en-CA');
     const savedDates = JSON.parse(localStorage.getItem(getSolvedDatesKey()) || '[]');
     setSolvedToday(savedDates.includes(today));
     // Streak logic: check if yesterday was solved, else reset
     if (savedDates.length > 0) {
       const sorted = savedDates.slice().sort();
       const lastDate = sorted[sorted.length - 1];
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-CA');
       if (lastDate !== yesterday && lastDate !== today) {
         setStreak(0);
         localStorage.setItem(getStreakKey(), 0);
@@ -130,13 +130,13 @@ export default function HomePage({ username, userId, userEmail, onSignOut, goToC
 
   const markSolved = () => {
     if (solvedToday) return;
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('en-CA');
     const savedDates = JSON.parse(localStorage.getItem(getSolvedDatesKey()) || '[]');
     let newStreak = 1;
     if (savedDates.length > 0) {
       const sorted = savedDates.slice().sort();
       const lastDate = sorted[sorted.length - 1];
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+      const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-CA');
       if (lastDate === yesterday) {
         newStreak = Number(localStorage.getItem(getStreakKey()) || 0) + 1;
       }

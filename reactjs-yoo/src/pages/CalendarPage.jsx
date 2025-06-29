@@ -17,6 +17,13 @@ const CalendarIcon = () => (
 export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFirstPage, streak, username }) {
   const [solvedDates, setSolvedDates] = useState([]);
   const [calendarStreak, setCalendarStreak] = useState(0);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+
+  useEffect(() => {
+    document.body.classList.toggle('night-mode', theme === 'dark');
+    document.body.classList.toggle('day-mode', theme === 'light');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   const getStreakKey = () => `streak_${username || 'demo'}`;
   const getSolvedDatesKey = () => `solvedDates_${username || 'demo'}`;
@@ -93,22 +100,36 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 pb-10 flex flex-col">
-      <div className='mt-4'></div>
-      {/* Only one navbar below, removed any duplicate */}
-      <ContestsNavbar 
-        goToHome={goToHome} 
-        goToCalendar={goToCalendar} 
-        onSignOut={onSignOut} 
-        streak={streak} 
-        username={username} 
+    <div className={
+      `min-h-screen flex flex-col transition-colors duration-300 ` +
+      (theme === 'dark'
+        ? 'bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 text-indigo-100'
+        : 'bg-gradient-to-br from-white via-blue-100 to-yellow-100 text-black')
+    }>
+      <ContestsNavbar
+        goToHome={goToHome}
+        goToCalendar={goToCalendar}
+        onSignOut={onSignOut}
+        streak={calendarStreak}
+        username={username}
+        theme={theme}
+        setTheme={setTheme}
       />
       {/* Title & Subtitle */}
-      <div className="flex flex-col items-center mt-4 sm:mt-2 mb-10 sm:mb-4 px-2 w-full">
+      <div className={
+        'flex flex-col items-center mt-4 sm:mt-2 mb-10 sm:mb-4 px-2 w-full ' +
+        (theme === 'dark' ? '' : 'text-black')
+      }>
         <div className="mt-16"></div>
         <CalendarIcon />   
-        <h1 className="text-center font-mono font-extrabold text-2xl sm:text-3xl md:text-4xl py-2 text-indigo-100 drop-shadow">Your Practice Calendar</h1>
-        <p className="text-center text-base sm:text-lg text-indigo-300 font-medium max-w-xs sm:max-w-xl">Track your daily progress and stay motivated! Days you solved a problem are highlighted in green.</p>
+        <h1 className={
+          'text-center font-mono font-extrabold text-2xl sm:text-3xl md:text-4xl py-2 ' +
+          (theme === 'dark' ? 'text-indigo-100' : 'text-black')
+        }>Your Practice Calendar</h1>
+        <p className={
+          'text-center text-base sm:text-lg font-medium max-w-xs sm:max-w-xl ' +
+          (theme === 'dark' ? 'text-indigo-300' : 'text-gray-800')
+        }>Track your daily progress and stay motivated! Days you solved a problem are highlighted in green.</p>
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2 sm:mt-4 w-full max-w-xs sm:max-w-none justify-center items-center">
           <button
             className={`w-full sm:w-auto px-4 sm:px-6 py-2 rounded-xl font-bold text-white shadow transition ${isSolvedDate(new Date()) ? 'bg-gray-700 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}

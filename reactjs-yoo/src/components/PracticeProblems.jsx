@@ -31,6 +31,7 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
   const [favoriteProblemObjs, setFavoriteProblemObjs] = useState([]); // store full favorite objects from backend
   const [toast, setToast] = useState(null); // For showing error/success messages
   const debounceRef = useRef({}); // To debounce rapid clicks
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
 
   // Helper to get unique key and id for a problem
   const getProblemKey = (p) => {
@@ -120,17 +121,31 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
   const favoriteProblem = async (problem) => {
     const key = getProblemKey({ ...problem, platform });
     const id = getProblemId({ ...problem, platform });
+    let link = '';
+    if ((problem.platform || platform) === 'codeforces') {
+      link = `https://codeforces.com/problemset/problem/${problem.contestId}/${problem.index}`;
+    } else if ((problem.platform || platform) === 'leetcode') {
+      link = `https://leetcode.com/problems/${problem.titleSlug}/`;
+    } else if ((problem.platform || platform) === 'gfg') {
+      link = problem.url || '';
+    } else if ((problem.platform || platform) === 'codechef') {
+      link = problem.url || '';
+    } else if ((problem.platform || platform) === 'atcoder') {
+      link = problem.url || '';
+    } else if ((problem.platform || platform) === 'hackerrank') {
+      link = problem.url || '';
+    }
     if (debounceRef.current[key]) return; // Prevent rapid double clicks
     debounceRef.current[key] = true;
     setFavLoading(key);
     try {
       const res = await axios.post('http://localhost:3001/api/favorites/problem', {
         userId: userId || 'demo',
-        problem: { ...problem, platform, id },
+        problem: { ...problem, platform, id, link },
       });
       setFavoriteProblems(prev => [...prev, key]);
       // Add to favoriteProblemObjs for immediate UI update
-      setFavoriteProblemObjs(prev => [...prev, res.data || { problem: { ...problem, platform, id } }]);
+      setFavoriteProblemObjs(prev => [...prev, res.data || { problem: { ...problem, platform, id, link } }]);
     } catch (err) {
       showToast('Failed to favorite problem', 'error');
     }
@@ -164,13 +179,23 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
     setTimeout(() => { debounceRef.current[key] = false; }, 500);
   };
 
+  useEffect(() => {
+    document.body.classList.toggle('night-mode', theme === 'dark');
+    document.body.classList.toggle('day-mode', theme === 'light');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 pb-10 flex flex-col">
+    <div className={
+      theme === 'dark'
+        ? 'min-h-screen flex flex-col transition-colors duration-300 bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 text-indigo-100'
+        : 'min-h-screen flex flex-col transition-colors duration-300 bg-gradient-to-br from-white via-blue-100 to-yellow-100 text-indigo-900'
+    }>
       <ContestsNavbar 
         goToHome={goToHome} 
         goToCalendar={goToCalendar} 
         onSignOut={() => {
-          // Clear all user data and redirect to first page
+          // Only clear user info, do NOT remove streak or solvedDates
           localStorage.removeItem('personalInfo');
           localStorage.removeItem('username');
           localStorage.removeItem('userEmail');
@@ -179,10 +204,16 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
           if (window.setPage) window.setPage('first');
         }}
         username={username} 
+        theme={theme}
+        setTheme={setTheme}
       />
       <div className="mb-10"></div>
-      <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-6 mt-20 border border-indigo-900/40">
-        <h2 className="text-3xl font-bold text-indigo-100 mb-6 text-center">Practice Problems</h2>
+      <div className={
+        theme === 'dark'
+          ? 'practice-box bg-gray-900/60 text-yellow-100 max-w-5xl mx-auto rounded-2xl shadow-2xl p-6 mt-20 border border-indigo-900/40'
+          : 'practice-box bg-white text-indigo-900 max-w-5xl mx-auto rounded-2xl shadow-2xl p-6 mt-20 border border-indigo-900/40'
+      }>
+        <h2 className="text-3xl font-bold text-indigo-900 mb-6 text-center">Practice Problems</h2>
         <div className="flex flex-wrap gap-4 justify-center mb-6">
           {platforms.map(p => (
             <button
@@ -218,13 +249,13 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, username 
         {(platform === 'codeforces' ) && (
           <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-center">
             <input
-              className="border border-indigo-700 bg-gray-900/60 text-indigo-100 rounded-lg px-4 py-2 w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="border border-indigo-700 bg-gray-900/60 text-indigo-900 rounded-lg px-4 py-2 w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               placeholder="Search by name or ID"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
             <select
-              className="border border-indigo-700 bg-gray-900/60 text-indigo-100 rounded-lg px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="border border-indigo-700 bg-gray-900/60 text-indigo-900 rounded-lg px-4 py-2 w-full md:w-1/4 focus:outline-none focus:ring-2 focus:ring-indigo-400"
               value={tag}
               onChange={e => setTag(e.target.value)}
             >

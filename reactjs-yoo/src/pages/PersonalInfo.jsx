@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function PersonalInfo({ onSubmit }) {
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [age, setAge] = useState('');
   const [college, setCollege] = useState('');
   const [errors, setErrors] = useState({});
+
+  useEffect(() => {
+    document.body.classList.toggle('night-mode', theme === 'dark');
+    document.body.classList.toggle('day-mode', theme === 'light');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,7 +27,12 @@ export default function PersonalInfo({ onSubmit }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 px-2 sm:px-0">
+    <div className={
+      `min-h-screen flex flex-col transition-colors duration-300 ` +
+      (theme === 'dark'
+        ? 'bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 text-indigo-100'
+        : 'bg-gradient-to-br from-white via-blue-100 to-yellow-100 text-black')
+    }>
       <div className="bg-white/30 backdrop-blur-lg p-4 sm:p-10 rounded-3xl shadow-2xl w-full max-w-xs sm:max-w-md md:max-w-lg flex flex-col items-center border border-indigo-200">
         <h2 className="text-xl sm:text-2xl font-bold text-indigo-700 mb-4 sm:mb-6 text-center">Personal Information</h2>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 sm:gap-5">

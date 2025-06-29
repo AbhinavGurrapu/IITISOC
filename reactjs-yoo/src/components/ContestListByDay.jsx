@@ -20,8 +20,7 @@ const platformLabels = {
 };
 
 function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, username }) {
-  // Make sure to pass goToHome, goToCalendar, onSignOut, streak, username from the parent just like CalendarPage
-  // This ensures the navbar is fully functional (navigation and sign out)
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [groupedContests, setGroupedContests] = useState({});
   const [favLoading, setFavLoading] = useState(null);
   const [selectedPlatforms, setSelectedPlatforms] = useState(allowedPlatforms);
@@ -126,22 +125,42 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
     setTimeout(() => { debounceRef.current[key] = false; }, 500);
   };
 
+  useEffect(() => {
+    document.body.classList.toggle('night-mode', theme === 'dark');
+    document.body.classList.toggle('day-mode', theme === 'light');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 flex flex-col">
+    <div className={
+      `min-h-screen flex flex-col transition-colors duration-300 ` +
+      (theme === 'dark'
+        ? 'bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 text-indigo-100'
+        : 'bg-gradient-to-br from-white via-blue-100 to-yellow-100 text-black')
+    }>
       <ContestsNavbar
         goToHome={goToHome}
         goToCalendar={goToCalendar}
         onSignOut={onSignOut}
         streak={streak}
         username={username}
+        theme={theme}
+        setTheme={setTheme}
       />
       <div className="pt-24 pb-4 flex flex-col items-center">
-        <h1 className="font-mono font-extrabold text-3xl md:text-4xl text-indigo-100 drop-shadow text-center mb-2">
+        <h1 className={
+          'font-mono font-extrabold text-3xl md:text-4xl drop-shadow text-center mb-2 ' +
+          (theme === 'dark' ? 'text-indigo-100' : 'text-indigo-900')
+        }>
           Contests by Day
         </h1>
-        <p className="text-lg text-indigo-300 font-medium max-w-xl text-center mt-2">
-          Browse and favorite contests by date and platform.
-        </p>
+        <div className={
+          theme === 'dark'
+            ? 'text-2xl font-bold text-yellow-100'
+            : 'text-2xl font-bold text-indigo-900'
+        }>
+          Browse and favorite contests by date and platform
+        </div>
       </div>
       <main className="flex flex-col gap-12 px-8 pb-40 flex-1 w-full items-center">
         <div className="w-full">

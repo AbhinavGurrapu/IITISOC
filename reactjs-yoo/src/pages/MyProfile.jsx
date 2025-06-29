@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 export default function MyProfile({ username, goToHome, personalInfo = {}, onEditInfo }) {
   const [editMode, setEditMode] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const [form, setForm] = useState({
     firstName: personalInfo.firstName || '',
     lastName: personalInfo.lastName || '',
@@ -56,6 +57,12 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
     }
   }, [personalInfo]);
 
+  useEffect(() => {
+    document.body.classList.toggle('night-mode', theme === 'dark');
+    document.body.classList.toggle('day-mode', theme === 'light');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -83,8 +90,17 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 flex flex-col items-center justify-center">
-      <div className="bg-white/10 backdrop-blur-lg shadow-2xl rounded-3xl border border-indigo-900/40 p-6 w-full max-w-md flex flex-col items-center relative overflow-visible">
+    <div className={
+      `min-h-screen flex flex-col items-center justify-center transition-colors duration-300 ` +
+      (theme === 'dark'
+        ? 'bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 text-indigo-100'
+        : 'bg-gradient-to-br from-white via-blue-100 to-yellow-100 text-black')
+    }>
+      {/* Optionally add ContestsNavbar here if you want nav and theme toggle */}
+      <div className={
+        'bg-white/10 backdrop-blur-lg shadow-2xl rounded-3xl border border-indigo-900/40 p-6 w-full max-w-md flex flex-col items-center relative overflow-visible ' +
+        (theme === 'dark' ? '' : 'text-black')
+      }>
         {/* Decorative Profile Icon with Glow */}
         <div className="absolute -top-14 left-1/2 -translate-x-1/2 flex flex-col items-center">
           <div className="bg-gradient-to-br from-indigo-700 via-indigo-400 to-emerald-400 border-4 border-white/10 rounded-full w-20 h-20 flex items-center justify-center shadow-2xl animate-pulse-slow relative">
@@ -93,9 +109,9 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
             </svg>
             <span className="absolute bottom-1 right-1 bg-green-400 border-2 border-white rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold text-white shadow">✔</span>
           </div>
-          <div className="mt-1 text-lg font-extrabold text-yellow-100 tracking-wide drop-shadow">{username || 'User'}</div>
+          <div className={theme === 'dark' ? 'mt-1 text-lg font-extrabold text-yellow-100 tracking-wide drop-shadow' : 'mt-1 text-lg font-extrabold text-indigo-900 tracking-wide drop-shadow'}>{username || 'User'}</div>
         </div>
-        <h1 className="text-2xl font-serif font-extrabold text-yellow-100 mb-6 mt-12 tracking-tight drop-shadow-lg">My Profile</h1>
+        <h1 className={theme === 'dark' ? 'text-2xl font-serif font-extrabold text-yellow-100 mb-6 mt-12 tracking-tight drop-shadow-lg' : 'text-2xl font-serif font-extrabold text-indigo-900 mb-6 mt-12 tracking-tight drop-shadow-lg'}>My Profile</h1>
         <div className="w-full flex flex-col gap-6 items-center">
           {editMode ? (
             <div className="flex flex-col gap-3 w-full items-center">
@@ -134,7 +150,11 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
               </div>
               <div className="flex flex-col items-start w-full">
                 <label className="text-sm font-bold text-indigo-200 mb-1">College/Institute</label>
-                <input name="college" value={form.college} onChange={handleChange} className="border-2 border-indigo-700 bg-gray-900/60 text-indigo-100 rounded-xl px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 font-medium shadow text-sm" />
+                <input name="college" value={form.college} onChange={handleChange} className={
+                  theme === 'dark'
+                    ? 'border-2 border-indigo-700 bg-gray-900/60 text-indigo-100 rounded-xl px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 font-medium shadow text-sm'
+                    : 'border-2 border-indigo-400 bg-white text-indigo-900 rounded-xl px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-indigo-300 font-medium shadow text-sm'
+                } />
               </div>
             </div>
           ) : (
@@ -142,19 +162,35 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
                 <div className="flex flex-col items-start">
                   <div className="text-sm font-bold text-indigo-200 mb-1">Name</div>
-                  <div className="text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide">{displayName || '-'}</div>
+                  <div className={
+                    theme === 'dark'
+                      ? 'text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide'
+                      : 'text-base text-indigo-900 font-semibold bg-white rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide'
+                  }>{displayName || '-'}</div>
                 </div>
                 <div className="flex flex-col items-start">
                   <div className="text-sm font-bold text-indigo-200 mb-1">Age</div>
-                  <div className="text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide">{displayAge || '-'}</div>
+                  <div className={
+                    theme === 'dark'
+                      ? 'text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide'
+                      : 'text-base text-indigo-900 font-semibold bg-white rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide'
+                  }>{displayAge || '-'}</div>
                 </div>
                 <div className="flex flex-col items-start">
                   <div className="text-sm font-bold text-indigo-200 mb-1">Email</div>
-                  <div className="text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1  w-fit shadow-md tracking-wide">{displayEmail}</div>
+                  <div className={
+                    theme === 'dark'
+                      ? 'text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1  w-fit shadow-md tracking-wide'
+                      : 'text-base text-indigo-900 font-semibold bg-white rounded-xl px-2 py-1 mt-1 w-fit shadow-md tracking-wide'
+                  }>{displayEmail}</div>
                 </div>
                 <div className="flex flex-col items-start md:col-span-2">
                   <div className="text-sm font-bold text-indigo-200 mb-1">College/Institute</div>
-                  <div className="text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide">{displayCollege || '-'}</div>
+                  <div className={
+                    theme === 'dark'
+                      ? 'text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide'
+                      : 'text-base text-indigo-900 font-semibold bg-white rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide'
+                  }>{displayCollege || '-'}</div>
                 </div>
                 <div className="flex flex-col items-start md:col-span-2">
                   <div className="text-sm font-bold text-indigo-200 mb-1">Password</div>
@@ -163,7 +199,11 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
                       type={showPassword ? 'text' : 'password'}
                       value={form.password}
                       readOnly
-                      className="text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide"
+                      className={
+                        theme === 'dark'
+                          ? 'text-base text-yellow-100 font-semibold bg-gray-900/60 rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide'
+                          : 'text-base text-indigo-900 font-semibold bg-white rounded-xl px-2 py-1 mt-1 w-full shadow-md tracking-wide'
+                      }
                     />
                     <button
                       type="button"
@@ -181,13 +221,13 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
         <div className="flex gap-3 mt-8 justify-center w-full">
           {editMode ? (
             <>
-              <button className="px-6 py-2 bg-green-600 hover:bg-green-800 text-white rounded-2xl font-bold shadow-lg transition text-sm tracking-wide" onClick={handleSave}>Save</button>
-              <button className="px-6 py-2 bg-gray-700 hover:bg-gray-900 text-white rounded-2xl font-bold shadow-lg transition text-sm tracking-wide" onClick={() => setEditMode(false)}>Cancel</button>
+              <button className={theme === 'dark' ? 'px-6 py-2 bg-green-600 hover:bg-green-800 text-white rounded-2xl font-bold shadow-lg transition text-sm tracking-wide' : 'px-6 py-2 bg-green-300 hover:bg-green-500 text-black rounded-2xl font-bold shadow-lg transition text-sm tracking-wide'} onClick={handleSave}>Save</button>
+              <button className={theme === 'dark' ? 'px-6 py-2 bg-gray-700 hover:bg-gray-900 text-white rounded-2xl font-bold shadow-lg transition text-sm tracking-wide' : 'px-6 py-2 bg-gray-200 hover:bg-gray-400 text-black rounded-2xl font-bold shadow-lg transition text-sm tracking-wide'} onClick={() => setEditMode(false)}>Cancel</button>
             </>
           ) : (
-            <button className="px-6 py-2 bg-indigo-700 hover:bg-indigo-900 text-yellow-100 rounded-2xl font-bold shadow-lg transition text-sm tracking-wide" onClick={() => setEditMode(true)}>Edit Info</button>
+            <button className={theme === 'dark' ? 'px-6 py-2 bg-indigo-700 hover:bg-indigo-900 text-yellow-100 rounded-2xl font-bold shadow-lg transition text-sm tracking-wide' : 'px-6 py-2 bg-indigo-200 hover:bg-indigo-400 text-black rounded-2xl font-bold shadow-lg transition text-sm tracking-wide'} onClick={() => setEditMode(true)}>Edit Info</button>
           )}
-          <button className="px-6 py-2 bg-indigo-900 hover:bg-indigo-800 text-yellow-100 rounded-2xl font-bold shadow-lg transition text-sm tracking-wide" onClick={goToHome}>Back to Home</button>
+          <button className={theme === 'dark' ? 'px-6 py-2 bg-indigo-900 hover:bg-indigo-800 text-yellow-100 rounded-2xl font-bold shadow-lg transition text-sm tracking-wide' : 'px-6 py-2 bg-indigo-300 hover:bg-indigo-500 text-black rounded-2xl font-bold shadow-lg transition text-sm tracking-wide'} onClick={goToHome}>Back to Home</button>
         </div>
       </div>
     </div>

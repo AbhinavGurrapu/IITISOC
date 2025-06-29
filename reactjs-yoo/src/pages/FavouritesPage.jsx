@@ -7,7 +7,14 @@ export default function FavouritesPage({ userId, goToHome }) {
   const [favoriteContests, setFavoriteContests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState(null);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
   const debounceRef = useRef({});
+
+  useEffect(() => {
+    document.body.classList.toggle('night-mode', theme === 'dark');
+    document.body.classList.toggle('day-mode', theme === 'light');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     async function fetchFavourites() {
@@ -33,7 +40,11 @@ export default function FavouritesPage({ userId, goToHome }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col items-center py-10">
+    <div className={
+      theme === 'dark'
+        ? 'min-h-screen flex flex-col items-center justify-center transition-colors duration-300 bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-800 text-indigo-100'
+        : 'min-h-screen flex flex-col items-center justify-center transition-colors duration-300 bg-gradient-to-br from-white via-blue-100 to-yellow-100 text-indigo-900'
+    }>
       <ContestsNavbar
         goToHome={goToHome}
         goToCalendar={() => window.setPage && window.setPage('calendar')}
@@ -44,10 +55,22 @@ export default function FavouritesPage({ userId, goToHome }) {
         }}
         streak={0}
         username={userId}
+        theme={theme}
+        setTheme={setTheme}
       />
-      <div className="bg-white/90 rounded-3xl shadow-2xl border border-indigo-200 p-8 w-full max-w-3xl flex flex-col items-center mt-24">
-        <h1 className="text-4xl font-serif font-bold text-indigo-800 mb-8">My Favourites</h1>
-        <button className="mb-8 px-6 py-2 bg-indigo-600 hover:bg-indigo-800 text-white rounded-xl font-semibold shadow transition" onClick={goToHome}>Back to Home</button>
+      <div className={
+        theme === 'dark'
+          ? 'bg-white/10 backdrop-blur-lg shadow-2xl rounded-3xl border border-indigo-900/40 p-6 w-full max-w-md flex flex-col items-center relative overflow-visible text-indigo-100'
+          : 'bg-white/80 backdrop-blur-lg shadow-2xl rounded-3xl border border-indigo-300/40 p-6 w-full max-w-md flex flex-col items-center relative overflow-visible text-indigo-900'
+      }>
+        <h1 className={
+          'text-4xl font-serif font-bold mb-8 ' +
+          (theme === 'dark' ? 'text-indigo-100' : 'text-black')
+        }>My Favourites</h1>
+        <button className={
+          'mb-8 px-6 py-2 rounded-xl font-semibold shadow transition ' +
+          (theme === 'dark' ? 'bg-indigo-700 hover:bg-indigo-900 text-yellow-300' : 'bg-blue-100 hover:bg-yellow-200 text-black')
+        } onClick={goToHome}>Back to Home</button>
 
         {loading ? (
           <div className="text-indigo-700 font-semibold">Loading favourites...</div>
