@@ -78,6 +78,17 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
     setFavLoading(null);
   };
 
+  const removeFavoriteContest = async (contest) => {
+    setFavLoading('remove-' + contest.id);
+    try {
+      await axios.delete('http://localhost:3001/api/favorites/contest', { data: { userId: userId || 'demo', contest } });
+      alert('Contest removed from favorites!');
+    } catch (err) {
+      alert('Failed to remove favorite');
+    }
+    setFavLoading(null);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col items-center pb-20 px-2">
       {/* Fixed navbar at the top, same as CalendarPage */}
@@ -141,6 +152,15 @@ function ContestListByDay({ userId, goToHome, goToCalendar, onSignOut, streak, u
                         className="ml-2 hover:scale-125 transition-transform"
                       >
                         {favLoading === c.id ? '❤️‍🔥' : '❤️'}
+                      </button>
+                      <button
+                        style={{ color: 'gray', fontSize: '1.5em' }}
+                        onClick={() => removeFavoriteContest(c)}
+                        disabled={favLoading === ('remove-' + c.id)}
+                        title="Remove from favorites"
+                        className="ml-2 hover:scale-125 transition-transform"
+                      >
+                        🗑️
                       </button>
                     </div>
                     <div className="font-serif font-extrabold text-2xl text-indigo-900 mb-2 leading-tight line-clamp-2">{c.event}</div>

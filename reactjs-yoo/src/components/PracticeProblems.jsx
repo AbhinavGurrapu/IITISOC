@@ -104,6 +104,17 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
     setFavLoading(null);
   };
 
+  const removeFavoriteProblem = async (problem) => {
+    setFavLoading('remove-' + (problem.contestId || problem.questionId || problem.title));
+    try {
+      await axios.delete('http://localhost:3001/api/favorites/problem', { data: { userId: userId || 'demo', problem: { ...problem, platform } } });
+      alert('Problem removed from favorites!');
+    } catch (err) {
+      alert('Failed to remove favorite');
+    }
+    setFavLoading(null);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 pb-10 flex flex-col">
       <div className="mt-4"></div>
@@ -163,6 +174,15 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
                   title="Favorite this problem"
                 >
                   {favLoading === (platform + '-' + (p.contestId || p.questionId || p.title)) ? '❤️‍🔥' : '❤️'}
+                </button>
+                <button
+                  className="text-2xl mr-2 hover:scale-110 transition"
+                  style={{ color: 'gray' }}
+                  onClick={() => removeFavoriteProblem(p)}
+                  disabled={favLoading === ('remove-' + (p.contestId || p.questionId || p.title))}
+                  title="Remove from favorites"
+                >
+                  🗑️
                 </button>
                 {platform === 'codeforces' ? (
                   <a

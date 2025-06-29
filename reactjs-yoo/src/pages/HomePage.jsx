@@ -212,6 +212,9 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
             <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('practice')}>
               Practice
             </li>
+            <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('favourites')}>
+              Favourites
+            </li>
             <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={goToCalendar}>
               My Calendar
             </li>

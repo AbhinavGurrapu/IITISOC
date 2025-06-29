@@ -13,6 +13,7 @@ import 'bootstrap/dist/js/bootstrap.min.js';
 import Footer from './components/Footer';
 import ContestsNavbar from './components/ContestsNavbar';
 import MyProfile from './pages/MyProfile'; // Import MyProfile component
+import FavouritesPage from './pages/FavouritesPage'; // Import FavouritesPage component
 
 function App() {
   const [page, setPage] = useState(() => {
@@ -196,6 +197,12 @@ function App() {
           goToFirstPage={goToFirstPage}
           goToCalendar={goToCalendar}
           // ...other props, e.g. userId...
+        />
+      )}
+      {page === 'favourites' && (
+        <FavouritesPage
+          userId={username || 'demo'}
+          goToHome={goToHome}
         />
       )}
       <Footer />
