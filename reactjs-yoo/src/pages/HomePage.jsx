@@ -190,10 +190,18 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-indigo-300 to-emerald-200 flex flex-col">
-      
-      {/* Floating Navbar with solid color, rounded edges, and margin */}
+      {/* Go Back Button */}
+      <button
+        className="absolute top-8 left-8 bg-white/40 hover:bg-white/70 text-indigo-700 rounded-full p-2 shadow-lg z-50 transition"
+        onClick={goToFirstPage}
+        aria-label="Go Back"
+        style={{backdropFilter: 'blur(6px)'}}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      {/* Floating Navbar with notification bell */}
       <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-700 h-16 flex justify-between px-2 shadow-xl rounded-2xl items-center border border-indigo-200">
-        <p className="ml-4 text-4xl font-serif font-semibold text-white cursor-pointer" onClick={goToHome}>
+        <p className="text-4xl font-serif font-semibold text-white cursor-pointer" onClick={goToHome}>
           CodeBlitz
         </p>
         <div className="flex items-center gap-6">
@@ -204,20 +212,31 @@ export default function HomePage({ username, onSignOut, goToCalendar, goToHome, 
             <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('practice')}>
               Practice
             </li>
-            
-            <li
-              className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition"
-              onClick={goToCalendar}
-            >
+            <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={goToCalendar}>
               My Calendar
             </li>
+            {/* Profile dropdown here (rightmost) */}
             <div className="relative flex items-center ml-4" ref={dropdownRef}>
+              {/* Notification Bell - smaller and left of profile */}
+              <div className="relative flex items-center">
+                <button
+                  className="focus:outline-none mr-2"
+                  onClick={() => setDropdownOpen((open) => !open)}
+                  aria-label="Notifications"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white drop-shadow-lg">
+                    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                  </svg>
+                </button>
+              </div>
               <button
-                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-800 text-white rounded-xl shadow transition focus:outline-none"
+                className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-800 text-white rounded-xl shadow transition focus:outline-none ml-2"
                 onClick={() => setDropdownOpen((open) => !open)}
+                type="button"
               >
                 <i className="fa-solid fa-user"></i>
-                <span className="hidden sm:inline">Profile</span>
+                <span className="hidden sm:inline">{username || 'Profile'}</span>
                 <i className="fa-solid fa-chevron-down text-xs"></i>
               </button>
               {dropdownOpen && (

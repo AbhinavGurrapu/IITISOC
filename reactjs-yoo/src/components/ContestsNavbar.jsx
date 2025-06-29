@@ -2,15 +2,44 @@ import React, { useState, useRef, useEffect } from 'react';
 
 function ContestsNavbar({ goToHome, goToCalendar, onSignOut, streak, username }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [hasUnread, setHasUnread] = useState(false);
   const dropdownRef = useRef(null);
+
+  // Example contest data for today (replace with real API logic)
+  useEffect(() => {
+    // Simulate: contest list for today (should be fetched from backend or API)
+    const today = new Date().toISOString().split('T')[0];
+    // Example: contests array, replace with real fetch
+    const contestsToday = [
+      { name: 'LeetCode Weekly', time: '8:00 PM', link: 'https://leetcode.com/contest/' },
+      // Add more contests for today if needed
+    ];
+    setNotifications(contestsToday.length > 0 ? contestsToday : []);
+    // Check localStorage for notification viewed state
+    const viewed = localStorage.getItem('notificationViewed');
+    setHasUnread(contestsToday.length > 0 && viewed !== today);
+  }, []);
+
+  // When notification dropdown is opened, mark as read globally
+  useEffect(() => {
+    if (showNotifications) {
+      setHasUnread(false);
+      // Mark as viewed for today in localStorage
+      const today = new Date().toISOString().split('T')[0];
+      localStorage.setItem('notificationViewed', today);
+    }
+  }, [showNotifications]);
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
+        setShowNotifications(false);
       }
     }
-    if (dropdownOpen) {
+    if (dropdownOpen || showNotifications) {
       document.addEventListener('mousedown', handleClickOutside);
     } else {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -18,7 +47,7 @@ function ContestsNavbar({ goToHome, goToCalendar, onSignOut, streak, username })
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [dropdownOpen]);
+  }, [dropdownOpen, showNotifications]);
 
   return (
     <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-700 h-16 flex justify-between px-2 shadow-xl rounded-2xl items-center border border-indigo-200">
@@ -30,9 +59,43 @@ function ContestsNavbar({ goToHome, goToCalendar, onSignOut, streak, username })
           <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('contests')}>Compete</li>
           <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={() => window.setPage && window.setPage('practice')}>Practice</li>
           <li className="cursor-pointer px-5 py-4 hover:bg-indigo-600 rounded-xl text-white transition" onClick={goToCalendar}>My Calendar</li>
-          <div className="relative flex items-center ml-4" style={{zIndex: 60}} ref={dropdownRef}>
+          {/* Profile dropdown here (rightmost) */}
+          <div className="relative flex items-center ml-4" ref={dropdownRef}>
+            {/* Notification Bell - smaller and left of profile */}
+            <div className="relative flex items-center">
+              <button
+                className="focus:outline-none mr-2"
+                onClick={() => setShowNotifications((v) => !v)}
+                aria-label="Notifications"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white drop-shadow-lg">
+                  <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                {hasUnread && (
+                  <span className="absolute top-0 left-3.5 block h-2.5 w-2.5 rounded-full ring-2 ring-white bg-red-500"></span>
+                )}
+              </button>
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-indigo-200 z-50 animate-fade-in p-4">
+                  <h4 className="font-bold text-indigo-700 mb-2">Today's Contests</h4>
+                  {notifications.length === 0 ? (
+                    <p className="text-gray-500 text-sm">No contests today.</p>
+                  ) : (
+                    <ul className="text-indigo-800 text-sm">
+                      {notifications.map((n, i) => (
+                        <li key={i} className="mb-2 last:mb-0">
+                          <a href={n.link} target="_blank" rel="noreferrer" className="underline font-semibold hover:text-indigo-600">{n.name}</a>
+                          <span className="ml-2 text-xs text-gray-500">{n.time}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </div>
             <button
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-800 text-white rounded-xl shadow transition focus:outline-none"
+              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-800 text-white rounded-xl shadow transition focus:outline-none ml-2"
               onClick={() => setDropdownOpen((open) => !open)}
               type="button"
             >
