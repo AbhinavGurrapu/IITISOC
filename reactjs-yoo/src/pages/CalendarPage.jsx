@@ -161,7 +161,7 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
 
       {/* Calendar Component */}
       <div className="flex justify-center flex-1 px-2 w-full">
-        <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-2 sm:p-6 md:p-10 w-full max-w-xs sm:max-w-xl border border-indigo-900/40">
+        <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl p-2 sm:p-6 md:p-6 w-full max-w-xs sm:max-w-xl border border-indigo-900/40">
           <Calendar
             tileClassName={({ date }) => {
               return isSolvedDate(date)
