@@ -146,13 +146,6 @@ export default function FavouritesPage({ userId, goToHome }) {
           </div>
         )}
 
-        {/* Fallback message */}
-        {(!loading && favoriteProblems.length === 0 && favoriteContests.length === 0) && (
-          <div className="text-red-600 font-bold text-center mb-4">
-            No favorites found for this user. Try adding some from the Practice or Contest pages.
-          </div>
-        )}
-
         {/* Toast */}
         {toast && (
           <div className={`fixed top-8 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg font-semibold text-lg ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}>

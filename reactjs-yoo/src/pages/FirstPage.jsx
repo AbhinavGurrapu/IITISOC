@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-// Lucide icon SVG for UserPlus
+// Lucide UserPlus icon
 const UserPlusIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -22,9 +22,13 @@ const UserPlusIcon = () => (
 );
 
 export default function FirstPage({ goToSignIn, goToSignUp, goToHome }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const navItems = ['Compete', 'Practice', 'Contests', 'Login'];
+
   return (
     <div className="min-h-screen flex flex-col relative">
-      {/* Background image with opacity 0.7 */}
+      {/* Background Image */}
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -35,45 +39,70 @@ export default function FirstPage({ goToSignIn, goToSignUp, goToHome }) {
           opacity: 0.7,
         }}
       ></div>
+
+      {/* Navigation */}
       <div className="relative z-10 flex flex-col min-h-screen">
-        {/* Glassy Lucid Navbar */}
-        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-700 h-20 flex justify-between items-center shadow-2xl rounded-2xl px-8 border border-indigo-200">
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-[90%] z-50 bg-indigo-700 h-20 flex justify-between items-center shadow-2xl rounded-2xl px-6 md:px-8 border border-indigo-200">
           <p
-            className="text-4xl font-serif font-extrabold text-white cursor-pointer drop-shadow-lg"
+            className="text-3xl md:text-4xl font-serif font-extrabold text-white cursor-pointer drop-shadow-lg"
             onClick={goToHome}
           >
             CodeBlitz
           </p>
-          <ul className="flex justify-end gap-2 items-center">
-            <li className="cursor-pointer px-6 py-3 text-white hover:bg-indigo-600/80 rounded-xl font-semibold text-lg transition shadow-sm hover:text-white"
-                onClick={goToSignIn}>
-              Compete
-            </li>
-            <li className="cursor-pointer px-6 py-3 text-white hover:bg-indigo-600/80 rounded-xl font-semibold text-lg transition shadow-sm hover:text-white"
-              onClick={goToSignIn}>
-              Practice
-            </li>
-            <li className="cursor-pointer px-6 py-3 text-white hover:bg-indigo-600/80 rounded-xl font-semibold text-lg transition shadow-sm hover:text-white"
-              onClick={goToSignIn}>
-              Contests
-            </li>
-            <li
-              className="cursor-pointer px-6 py-3 text-white hover:bg-indigo-600/80 rounded-xl font-semibold text-lg transition shadow-sm hover:text-white"
-              onClick={goToSignIn}
-            >
-              Login
-            </li>
+
+          {/* Desktop nav */}
+          <ul className="hidden md:flex justify-end gap-3 items-center">
+            {navItems.map((label) => (
+              <li
+                key={label}
+                className="cursor-pointer px-4 py-2 text-white hover:bg-indigo-600/80 rounded-xl font-semibold text-lg transition shadow-sm"
+                onClick={goToSignIn}
+              >
+                {label}
+              </li>
+            ))}
           </ul>
+
+          {/* Hamburger - Mobile */}
+          <div className="md:hidden text-white" onClick={() => setMenuOpen(!menuOpen)}>
+            {menuOpen ? (
+              <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </div>
         </div>
-        {/* Main Content Lucid Style */}
+
+        {/* Mobile Dropdown */}
+        {menuOpen && (
+          <div className="fixed top-24 left-1/2 transform -translate-x-1/2 w-[90%] bg-white/90 text-indigo-800 rounded-2xl shadow-xl z-40 md:hidden flex flex-col px-6 py-4 gap-2 border border-indigo-300">
+            {navItems.map((label) => (
+              <button
+                key={label}
+                className="text-left px-3 py-2 rounded-lg hover:bg-indigo-100 text-lg font-semibold"
+                onClick={() => {
+                  setMenuOpen(false);
+                  goToSignIn();
+                }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Main Hero Content */}
         <main className="flex flex-1 items-center justify-center pt-32 pb-10">
           <div className="flex flex-col justify-center items-start max-w-xl bg-white/30 backdrop-blur-lg rounded-3xl p-10 shadow-2xl border border-white/30 mt-10 md:mt-0">
             <p className="text-4xl md:text-5xl font-extrabold text-indigo-900 mb-8 drop-shadow-lg leading-tight">
               Know All About The Contests
             </p>
             <p className="text-xl text-indigo-800/90 mb-10 font-medium">
-              Gives info about the contests on various sites such as Codeforces,
-              AtCoder, LeetCode, CodeChef, and GeeksForGeeks
+              Gives info about the contests on various sites such as Codeforces, AtCoder, LeetCode, CodeChef, and GeeksForGeeks
             </p>
             <button
               className="flex items-center gap-3 bg-white/60 backdrop-blur-md text-indigo-900 font-bold py-4 px-8 rounded-2xl shadow-lg text-xl transition-all duration-200 border-2 border-white/30 hover:bg-white/80 hover:text-blue-600 hover:scale-105"
@@ -85,7 +114,8 @@ export default function FirstPage({ goToSignIn, goToSignUp, goToHome }) {
           </div>
         </main>
       </div>
-      {/* Decorative gradients for Lucid style */}
+
+      {/* Decorative gradients */}
       <div className="absolute left-0 top-0 w-96 h-96 bg-pink-400/20 rounded-full blur-3xl -z-10"></div>
       <div className="absolute right-0 bottom-0 w-96 h-96 bg-yellow-300/20 rounded-full blur-3xl -z-10"></div>
     </div>

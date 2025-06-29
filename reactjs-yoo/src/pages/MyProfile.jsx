@@ -145,12 +145,12 @@ export default function MyProfile({ username, goToHome, personalInfo = {}, onEdi
                   <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-full shadow-md tracking-wide">{displayName || '-'}</div>
                 </div>
                 <div className="flex flex-col items-start">
-                  <div className="text-base font-bold text-indigo-700 mb-1">Email</div>
-                  <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-full shadow-md tracking-wide">{displayEmail}</div>
-                </div>
-                <div className="flex flex-col items-start">
                   <div className="text-base font-bold text-indigo-700 mb-1">Age</div>
                   <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-full shadow-md tracking-wide">{displayAge || '-'}</div>
+                </div>
+                <div className="flex flex-col items-start">
+                  <div className="text-base font-bold text-indigo-700 mb-1">Email</div>
+                  <div className="text-lg text-indigo-900 font-semibold bg-indigo-50 rounded-xl px-3 py-2 mt-1 w-fit w-full shadow-md tracking-wide">{displayEmail}</div>
                 </div>
                 <div className="flex flex-col items-start md:col-span-2">
                   <div className="text-base font-bold text-indigo-700 mb-1">Password</div>

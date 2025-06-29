@@ -18,7 +18,7 @@ const platforms = [
 const CLIST_USERNAME = 'Parthu';
 const CLIST_API_KEY = '0b2000fe1d0c548f5343e6720c8f92a0648f6377';
 
-function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, username }) {
+function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak: _streak, username }) {
   const [platform, setPlatform] = useState('codeforces');
   const [problems, setProblems] = useState([]);
   const [contests, setContests] = useState([]);
@@ -31,6 +31,30 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
   const [favoriteProblemObjs, setFavoriteProblemObjs] = useState([]); // store full favorite objects from backend
   const [toast, setToast] = useState(null); // For showing error/success messages
   const debounceRef = useRef({}); // To debounce rapid clicks
+
+  // User-specific streak and solvedDates
+  const [streak, setStreak] = useState(0);
+  const [solvedDates, setSolvedDates] = useState([]);
+
+  // Helper to get user-specific keys
+  const getStreakKey = () => `streak_${username || userId || 'demo'}`;
+  const getSolvedDatesKey = () => `solvedDates_${username || userId || 'demo'}`;
+
+  // Load streak and solvedDates for this user on mount
+  useEffect(() => {
+    const savedStreak = Number(localStorage.getItem(getStreakKey()) || 0);
+    setStreak(savedStreak);
+    const savedDates = JSON.parse(localStorage.getItem(getSolvedDatesKey()) || '[]');
+    setSolvedDates(savedDates);
+  }, [username, userId]);
+
+  // Save streak and solvedDates when they change
+  useEffect(() => {
+    localStorage.setItem(getStreakKey(), streak);
+  }, [streak, username, userId]);
+  useEffect(() => {
+    localStorage.setItem(getSolvedDatesKey(), JSON.stringify(solvedDates));
+  }, [solvedDates, username, userId]);
 
   // Helper to get unique key and id for a problem
   const getProblemKey = (p) => {
@@ -89,13 +113,6 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
         } else if (platform === 'codeforces') {
           const res = await axios.get('https://codeforces.com/api/problemset.problems');
           setProblems(res.data.result.problems);
-        } else if (platform === 'leetcode') {
-          const res = await axios.get('https://leetcode-api-faisalshohag.vercel.app/leetcode/problems');
-          if (res.data && Array.isArray(res.data.problems)) {
-            setProblems(res.data.problems);
-          } else {
-            setError('LeetCode problems are currently unavailable.');
-          }
         } else {
           setProblems([]);
         }
@@ -184,6 +201,8 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
           localStorage.removeItem('username');
           localStorage.removeItem('userEmail');
           localStorage.removeItem('currentPage');
+          localStorage.removeItem(getStreakKey());
+          localStorage.removeItem(getSolvedDatesKey());
           if (onSignOut) onSignOut();
           if (window.setPage) window.setPage('first');
         }}
@@ -204,7 +223,28 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
             </button>
           ))}
         </div>
-        {(platform === 'codeforces' || platform === 'leetcode') && (
+        {/* One button to go to the selected platform's practice problems page, placed below platform buttons */}
+        {platform !== 'codeforces' && (
+          <div className="flex justify-center mb-6">
+            <a
+              href={
+                platform === 'leetcode' ? 'https://leetcode.com/problemset/all/' :
+                platform === 'gfg' ? 'https://practice.geeksforgeeks.org/explore' :
+                platform === 'codechef' ? 'https://www.codechef.com/practice' :
+                platform === 'atcoder' ? 'https://atcoder.jp/contests/' :
+                platform === 'hackerrank' ? 'https://www.hackerrank.com/domains/tutorials/10-days-of-javascript' :
+                '#'
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-lg bg-indigo-500 text-white font-semibold text-sm shadow hover:bg-indigo-700 border border-indigo-700 transition"
+              title={`Go to ${platforms.find(p => p.key === platform)?.name || ''} practice problems page`}
+            >
+              Go to {platforms.find(p => p.key === platform)?.name} Problems
+            </a>
+          </div>
+        )}
+        {(platform === 'codeforces' ) && (
           <div className="flex flex-col md:flex-row gap-4 mb-6 items-center justify-center">
             <input
               className="border border-indigo-300 rounded-lg px-4 py-2 w-full md:w-1/2 focus:outline-none focus:ring-2 focus:ring-indigo-400"
@@ -284,11 +324,6 @@ function PracticeProblems({ userId, goToHome, goToCalendar, onSignOut, streak, u
             );
           })}
         </ul>
-      </div>
-
-      <div className="fixed bottom-10 right-8 z-50 bg-indigo-700 border border-indigo-300 shadow-2xl rounded-2xl flex items-center gap-2 px-6 py-3 text-white font-bold text-lg backdrop-blur-lg">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-zap text-yellow-400"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        <span>Streak: {streak}</span>
       </div>
 
       {toast && (

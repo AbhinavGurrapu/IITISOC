@@ -18,8 +18,11 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
   const [solvedDates, setSolvedDates] = useState([]);
   const [calendarStreak, setCalendarStreak] = useState(0);
 
+  const getStreakKey = () => `streak_${username || 'demo'}`;
+  const getSolvedDatesKey = () => `solvedDates_${username || 'demo'}`;
+
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('solvedDates')) || [];
+    const saved = JSON.parse(localStorage.getItem(getSolvedDatesKey()) || '[]');
     setSolvedDates(saved);
     // Streak logic: check if yesterday was solved, else reset
     if (saved.length > 0) {
@@ -29,15 +32,15 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
       const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-CA');
       if (lastDate !== yesterday && lastDate !== today) {
         setCalendarStreak(0);
-        localStorage.setItem('streak', 0);
+        localStorage.setItem(getStreakKey(), 0);
       } else {
-        setCalendarStreak(Number(localStorage.getItem('streak') || 0));
+        setCalendarStreak(Number(localStorage.getItem(getStreakKey()) || 0));
       }
     } else {
       setCalendarStreak(0);
-      localStorage.setItem('streak', 0);
+      localStorage.setItem(getStreakKey(), 0);
     }
-  }, []);
+  }, [username]);
 
   const isSolvedDate = (date) => {
     const formatted = date.toLocaleDateString('en-CA');
@@ -49,7 +52,7 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
     if (isSolvedDate(new Date())) return;
     const updated = [...solvedDates, today];
     setSolvedDates(updated);
-    localStorage.setItem('solvedDates', JSON.stringify(updated));
+    localStorage.setItem(getSolvedDatesKey(), JSON.stringify(updated));
     // Streak logic
     let newStreak = 1;
     if (updated.length > 1) {
@@ -57,11 +60,11 @@ export default function CalendarPage({ goToHome, onSignOut, goToCalendar, goToFi
       const lastDate = sorted[sorted.length - 2];
       const yesterday = new Date(Date.now() - 86400000).toLocaleDateString('en-CA');
       if (lastDate === yesterday) {
-        newStreak = Number(localStorage.getItem('streak') || 0) + 1;
+        newStreak = Number(localStorage.getItem(getStreakKey()) || 0) + 1;
       }
     }
     setCalendarStreak(newStreak);
-    localStorage.setItem('streak', newStreak);
+    localStorage.setItem(getStreakKey(), newStreak);
   };
 
   return (
