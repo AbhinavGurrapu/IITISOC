@@ -1,12 +1,9 @@
 const mongoose = require('mongoose');
 
-const MONGO_URI = 'MONGODB_URI=mongodb+srv://mokshithmsd:ckHe1AGu9miXW6WS@cluster27.jrumcne.mongodb.net/?retryWrites=true&w=majority&appName=Cluster27';
+const MONGO_URI = process.env.MONGODB_URI;
 
 function connectDB() {
-  mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  mongoose.connect(MONGO_URI);
 
   mongoose.connection.on('connected', () => {
     console.log('MongoDB connected');
